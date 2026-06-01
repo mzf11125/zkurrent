@@ -146,17 +146,23 @@ SCREEN  →  DECIDE  →  EXECUTE  →  MONITOR  →  REBALANCE  →  LEARN
 │    agent_config.move      — Strategy params (Move object)     │
 │    position_tracker.move  — PnL history (Move object)        │
 │    fee_vault.move         — Fee collection (Move object)     │
-│    zk_prover.move         — Groth16 verifier (sui::groth16)  │
+│    zk_prover.move         — Midnight proof hash verifier       │
 │  Protocols:                                                   │
 │    DeepBook V3  — On-chain orderbook                         │
 │    Turbos       — Concentrated liquidity AMM                  │
 │    Cetus        — Concentrated liquidity AMM                  │
-│  ZK Layer (Phase 1 — Sui-native):                             │
-│    sui::groth16 — On-chain proof verification                │
-│    Noir circuit — Strategy compliance + config integrity      │
-│  ZK Layer (Phase 2 — Midnight cross-chain):                   │
-│    Midnight Compact — Private ZK attestation storage          │
-│    Midnight→Sui bridge — Verified proof relay                │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ Proof hash relay
+┌──────────────────────────┴──────────────────────────────────┐
+│                Midnight Network (ZK Attestation Layer)        │
+│  Compact Contracts:                                            │
+│    strategy_attest.compact — ZK circuit for strategy compliance│
+│    performance_proof.compact — Verifiable PnL attestation     │
+│  Protocol:                                                     │
+│    1AM Wallet — Dust-free proving via ProofStation            │
+│    Midnight Indexer — GraphQL queries for attestation history │
+│  Dual Submission:                                              │
+│    Midnight DApp entry — ZK attestation with private state    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -360,44 +366,78 @@ module zkurrent::zk_prover {
 }
 ```
 
-### ZK Circuit Design (Phase 1 — Sui-native groth16)
+### ZK Circuit Design (Midnight Compact — Phase 1)
 
-ZKurrent uses **Sui's native `sui::groth16` verifier** for Phase 1. The circuit is written in Noir and compiled to a Groth16 proof that is verified on-chain by `zk_prover.move`.
+ZKurrent uses **Midnight Network's Compact circuits** for ZK attestations. The LP agent executes trades on Sui; the ZK proofs live on Midnight's private ledger.
 
-The circuit proves two constraints:
+Two Compact contracts:
 
-1. **Strategy Boundary**: For every position in `PositionTracker`, the `max_il_threshold` was not exceeded before closure
-2. **Config Integrity**: The `AgentConfig` used for verification matches the one the user configured
+#### strategy_attest.compact
 
-**Public inputs** (visible on-chain):
-- `config_hash` — SHA-256 of the AgentConfig at time of verification
-- `position_count` — number of positions covered
-- `proof_hash` — SHA-256 of the Groth16 proof
+```compact
+// Verifies that LP operations comply with user-configured AgentConfig
+// Public: proof hash + config hash. Private: actual position parameters.
 
-**Private witnesses** (never leave the agent):
-- Actual position parameters (ranges, amounts, entry/exit prices)
-- Specific pool selections and timing
-- Fee accrual details
+circuit StrategyAttestation {
+    // Public inputs — visible on-chain
+    public config_hash: Hash;        // SHA-256 of AgentConfig
+    public position_count: UInt;     // Number of positions in this batch
 
-### Why Sui-native ZK (Not Midnight) for Phase 1
+    // Private witnesses — never leave the circuit
+    witness position_ranges: Array<(Price, Price)>;
+    witness entry_prices: Array<Price>;
+    witness exit_prices: Array<Price>;
+    witness amounts: Array<Amount>;
+    witness max_il_breached: Array<Bool>;
 
-| Factor | Sui-native (`sui::groth16`) | Midnight Network |
-|--------|---------------------------|-----------------|
-| Hackathon scope | Single chain — simpler architecture | Adds cross-chain bridge + proof relay |
-| Timeline fit (29 days) | Feasible | Would consume 7-10 days on infra |
-| Judge relevance | This is **Sui** Overflow | Extra chain judges don't evaluate |
-| Maturity | Native Sui Move module, documented | Compact ZK circuits (you know this deeply) |
-| Uniqueness | Standard | Genuinely novel (no existing Midnight↔Sui ZK bridge) |
+    // Constraint: no position exceeded the config's max_il_threshold
+    constraint forall i in 0..position_count:
+        max_il_breached[i] == false;
+}
+```
 
-### Phase 2: Midnight Network Integration
+#### performance_proof.compact
 
-Post-hackathon, ZKurrent proofs will be **dual-anchored** on Midnight Network:
+```compact
+// Verifiable cumulative PnL attestation without revealing individual trades.
+// Third parties can verify: "This agent earned X% APY over Y days"
+// without seeing which pools, ranges, or amounts.
 
-1. ZK attestations stored privately on Midnight (Compact ledger)
-2. Midnight→Sui bridge relays verified proof hashes
-3. Users get Midnight's selective disclosure: prove creditworthiness/performance to third parties without revealing strategy IP
+circuit PerformanceProof {
+    public cumulative_pnl: Int64;      // Total profit/loss in basis points
+    public period_start: Timestamp;
+    public period_end: Timestamp;
+    public proof_hash: Hash;
 
-This leverages existing Tawf ecosystem infrastructure: KREDZ (Midnight ZK circuits), MIDAS (Midnight→Base bridge), and Tawf DID (cross-chain identity).
+    witness individual_trades: Array<TradeOutcome>;
+    witness fee_accrual: Array<Amount>;
+    witness il_events: Array<ILRecord>;
+
+    // Constraint: cumulative_pnl = sum(realized_pnl + fees - IL)
+    constraint cumulative_pnl == compute_total(trades, fees, il);
+}
+```
+
+### Why Midnight ZK (Not Sui-native groth16) for Phase 1
+
+| Factor | Midnight Compact | Sui-native `sui::groth16` |
+|--------|-----------------|--------------------------|
+| **Private state** | Native — witnesses never touch chain | Public verifier only; witnesses exist off-chain |
+| **Existing infra** | KREDZ circuits, 1AM wallet, ProofStation, indexer already running | Need to build Noir toolchain from scratch |
+| **Dual submission** | Midnight DApp entry + Sui Overflow = **two hackathons, one codebase** | Sui only |
+| **Selective disclosure** | Built-in — prove credit tier without revealing score | Manual — need custom circuit for each disclosure level |
+| **Cross-chain cred** | Demonstrates Midnight↔Sui interoperability | Single-chain |
+| **Your expertise** | Midnight Build Club Fellow, 5+ Compact circuits deployed | Learning Noir is new |
+
+### Dual Hackathon Submission Strategy
+
+| Hackathon | What You Submit | Chain |
+|-----------|----------------|-------|
+| **Sui Overflow** — Agentic Web + DeepBook | LP agent: Move contracts, off-chain agent, React dashboard, Sui DEX integrations | Sui |
+| **Sui Overflow** — Midnight track (bonus) | Cross-chain ZK: Sui LP execution verifiably attested on Midnight | Midnight↔Sui |
+| **Midnight Build Club / Bounties** | Standalone Midnight DApp: `strategy_attest.compact` + `performance_proof.compact` + 1AM frontend | Midnight |
+
+One codebase. Three eligible tracks. You already own every piece of Midnight infra this needs.
 
 ---
 

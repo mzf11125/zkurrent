@@ -3,10 +3,10 @@
 ## Project Identity
 
 - **Name**: ZKurrent
-- **Purpose**: ZK-verified autonomous LP agent for Sui DeFi — screen pools, open positions, prove strategy compliance, manage PnL, rebalance, learn
+- **Purpose**: ZK-verified autonomous LP agent — Sui LP execution + Midnight ZK attestation
 - **Domain**: zkurrent.xyz
-- **Hackathon**: Sui Overflow 2026 (Agentic Web + DeepBook tracks)
-- **Stack**: Sui Move (contracts) + Noir/RISC0 (ZK circuits) + TypeScript (agent) + React 19 + Vite 8 (frontend)
+- **Hackathon**: Sui Overflow 2026 (Agentic Web + DeepBook) + Midnight Build Club (ZK DApp)
+- **Stack**: Sui Move (LP contracts) + Midnight Compact (ZK circuits) + TypeScript (agent) + React 19 + Vite 8 (frontend)
 
 ---
 
@@ -39,13 +39,14 @@
 
 ## Code Conventions
 
-### Move Contracts
+### Sui Move Contracts
 
 ```move
 // Module naming: snake_case
 module zkurrent::agent_config { ... }
 module zkurrent::position_tracker { ... }
 module zkurrent::fee_vault { ... }
+module zkurrent::zk_prover { ... }
 
 // Struct naming: PascalCase
 struct AgentConfig has key, store { ... }
@@ -66,6 +67,35 @@ fun test_create_config() { ... }
 #[test]
 #[expected_failure(abort_code = 0)]
 fun test_non_owner_update() { ... }
+```
+
+### Midnight Compact Contracts
+
+```compact
+// Contract naming: snake_case.compact
+// strategy_attest.compact
+// performance_proof.compact
+
+// Circuit structuring:
+//   public  = visible on ledger
+//   witness = private, never leaves prover
+
+circuit StrategyAttestation {
+    public config_hash: Hash;
+    public position_count: UInt;
+
+    witness position_ranges: Array<(Price, Price)>;
+    witness max_il_breached: Array<Bool>;
+
+    constraint forall i in 0..position_count:
+        max_il_breached[i] == false;
+}
+
+// Testing: use midnight-testkit (same pattern as KREDZ)
+// npx vitest contracts/zkurrent/midnight/tests/
+// Deploy: yarn midnight:deploy (targets preprod for dev, preview for demo)
+// Prove:   yarn midnight:prove --circuit strategy_attest
+// Verify:  via Midnight Indexer GraphQL (indexer.preprod.midnight.network)
 ```
 
 ### TypeScript (agent + frontend)

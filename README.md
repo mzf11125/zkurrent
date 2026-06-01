@@ -1,10 +1,10 @@
-# ZKurrent — ZK-Verified Autonomous LP Agent for Sui
+# ZKurrent — ZK-Verified Autonomous LP Agent on Sui + Midnight
 
 > **Screen pools. Open positions. Prove performance. Autonomously.**
 
-ZKurrent is a zero-knowledge verified liquidity provision agent for Sui DeFi. It screens pools across DeepBook, Turbos, and Cetus; opens and manages concentrated liquidity positions using ZK-verified strategies; generates cryptographic proofs of performance without revealing exact positions; and learns from past trade outcomes — all autonomously.
+ZKurrent is a zero-knowledge verified liquidity provision agent. LP execution runs on Sui (DeepBook, Turbos, Cetus). ZK attestations live on Midnight Network (Compact circuits with private state). One agent, two chains, verifiable performance.
 
-Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBook tracks.
+Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBook tracks + Midnight cross-chain bonus.
 
 ---
 
@@ -14,7 +14,7 @@ Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBoo
 ┌──────────────────────────────────────────────────────────┐
 │                     React Dashboard                       │
 │  /dashboard  │  /pools  │  /positions  │  /strategy      │
-│  (Sui dApp Kit + Zustand + SSE stream)                   │
+│  (Sui dApp Kit + 1AM wallet + SSE stream)                │
 └──────────────────────┬───────────────────────────────────┘
                        │ HTTP + SSE
 ┌──────────────────────┴───────────────────────────────────┐
@@ -24,24 +24,34 @@ Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBoo
 │  │ Screener  │  │ Manager   │  │ Engine       │           │
 │  └────┬─────┘  └────┬─────┘  └──────┬───────┘           │
 │       │              │               │                    │
-│       │     Sui SDK (ts-sdk + dapp-kit)                  │
+│       │     Sui SDK + Midnight SDK                       │
 └───────┼──────────────┼───────────────┼────────────────────┘
         │              │               │
 ┌───────┴──────────────┴───────────────┴────────────────────┐
-│                    Sui Blockchain                         │
+│                    Sui Blockchain (LP Execution)           │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
 │  │ AgentConfig  │  │PositionTracker│  │  FeeVault    │   │
 │  │  (Move obj)  │  │  (Move obj)  │  │  (Move obj)  │   │
 │  └──────────────┘  └──────────────┘  └──────────────┘   │
 │  ┌──────────────┐                                        │
-│  │  ZKProver    │ ← proves strategy compliance &        │
-│  │  (Move+sdk)  │   performance without exposing params  │
+│  │  zk_prover   │ ← verifies Midnight proof hashes      │
+│  │  (Move obj)  │                                        │
 │  └──────────────┘                                        │
-│                                                           │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
 │  │  DeepBook    │  │   Turbos     │  │    Cetus     │   │
 │  │ (orderbook)  │  │   (CLMM)     │  │   (CLMM)     │   │
 │  └──────────────┘  └──────────────┘  └──────────────┘   │
+└───────────────────────┬───────────────────────────────────┘
+                        │ Proof hash relay
+┌───────────────────────┴───────────────────────────────────┐
+│            Midnight Network (ZK Attestation Layer)         │
+│  ┌──────────────────────┐  ┌──────────────────────┐      │
+│  │ strategy_attest      │  │ performance_proof    │      │
+│  │   (Compact circuit)  │  │   (Compact circuit)  │      │
+│  │ Private: position    │  │ Private: trade       │      │
+│  │ params, ranges, fees │  │ outcomes, IL events  │      │
+│  └──────────────────────┘  └──────────────────────┘      │
+│  1AM Wallet · ProofStation · Midnight Indexer            │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -170,7 +180,8 @@ zkurrent/
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Contracts | Sui Move | latest |
+| LP Execution | Sui Move | latest |
+| ZK Attestation | Midnight Compact | — |
 | Agent | TypeScript + Node.js | 22+ |
 | Frontend | React | 19 |
 | Build Tool | Vite | 8 |
@@ -179,7 +190,8 @@ zkurrent/
 | Icons | Lucide React | latest |
 | State | Zustand | 5+ |
 | Charts | Recharts | 2+ |
-| Wallet | Sui dApp Kit | latest |
+| Sui Wallet | @mysten/dapp-kit | latest |
+| Midnight Wallet | 1AM (browser extension) | — |
 | Fonts | Manrope + Geist Mono | — |
 
 ---
@@ -188,9 +200,16 @@ zkurrent/
 
 | Track | How ZKurrent Qualifies |
 |-------|----------------------|
-| **Agentic Web** (Core, $30K 1st) | Autonomous AI agent that acts (opens positions), transacts (on-chain LP ops), coordinates (rebalances across pools) |
-| **DeepBook** (Specialized, $70K pool) | Direct DeepBook V3 integration for orderbook liquidity provision |
-| **ZK/Privacy** (Bonus) | ZK proofs of strategy compliance + verifiable performance without revealing positions |
+| **Agentic Web** (Core, $30K 1st) | Autonomous AI agent: screens pools, opens positions, rebalances across 3 DEXes |
+| **DeepBook** (Specialized, $70K pool) | Direct DeepBook V3 integration for orderbook liquidity |
+| **Midnight ZK** (Cross-chain bonus) | ZK attestations on Midnight Compact: private proofs of strategy compliance + verifiable PnL |
+
+### Dual Hackathon Eligibility
+
+| Hackathon | What | Chain |
+|-----------|------|-------|
+| **Sui Overflow** | LP agent: Move contracts, off-chain agent, React dashboard | Sui |
+| **Midnight Build Club** | ZK DApp: `strategy_attest.compact` + `performance_proof.compact` + 1AM frontend | Midnight |
 
 ---
 
