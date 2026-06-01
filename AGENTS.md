@@ -121,8 +121,8 @@ fun test_non_owner_update() { ... }
 
 ```compact
 // Contract naming: snake_case.compact
-// strategy_attest.compact
-// performance_proof.compact
+// strategy_attest.compact  — 5 constraint enforcement (IL, blocklist, allowlist, DEX ≤3, position ≤20)
+// performance_proof.compact — verifiable cumulative PnL
 
 // Circuit structuring:
 //   public  = visible on ledger
@@ -130,20 +130,32 @@ fun test_non_owner_update() { ... }
 
 circuit StrategyAttestation {
     public config_hash: Hash;
-    public position_count: UInt;
+    public total_positions: UInt;
+    public dex_counts: (UInt, UInt, UInt, UInt);
+    public any_pool_blocked: Bool;
+    public any_pool_not_allowed: Bool;
 
-    witness position_ranges: Array<(Price, Price)>;
-    witness max_il_breached: Array<Bool>;
+    witness positions: Array<{
+        pool_id: Hash, dex_index: UInt,
+        range_low: Price, range_high: Price,
+        entry_price: Price, amount: Amount,
+        il_breached: Bool,
+    }>;
 
-    constraint forall i in 0..position_count:
-        max_il_breached[i] == false;
+    // Constraint 1: IL threshold
+    constraint forall p in positions: p.il_breached == false;
+    // Constraint 2: No blocked pools
+    constraint any_pool_blocked == false;
+    // Constraint 3: All pools allowlisted
+    constraint any_pool_not_allowed == false;
+    // Constraint 4: DEX diversification (max 3 per DEX)
+    constraint dex_counts[0] <= 3;
+    constraint dex_counts[1] <= 3;
+    constraint dex_counts[2] <= 3;
+    constraint dex_counts[3] <= 3;
+    // Constraint 5: Position limit (max 20)
+    constraint total_positions <= 20;
 }
-
-// Testing: use midnight-testkit (same pattern as KREDZ)
-// npx vitest contracts/zkurrent/midnight/tests/
-// Deploy: yarn midnight:deploy (targets preprod for dev, preview for demo)
-// Prove:   yarn midnight:prove --circuit strategy_attest
-// Verify:  via Midnight Indexer GraphQL (indexer.preprod.midnight.network)
 ```
 
 ### TypeScript (agent + frontend)
@@ -159,7 +171,7 @@ export class PositionManager { ... }
 // Type-first: no 'any'
 type PoolScore = {
   poolId: string;
-  dex: 'deepbook' | 'turbos' | 'cetus';
+  dex: 'deepbook' | 'turbos' | 'cetus' | 'cetus_dlmm';
   tokenPair: string;
   tvl: number;
   volume24h: number;

@@ -44,8 +44,9 @@ ZKurrent inherits its structural DNA from [KREDZ](https://kredz.xyz) and its blo
 | `--color-loss` | `text-loss` | `#FF6B6B` | Negative PnL, IL warnings |
 | `--color-loss-dim` | `text-loss-dim` | `rgba(255, 107, 107, 0.6)` | Secondary loss indicators |
 | `--color-deepbook` | `text-deepbook` | `#6C5CE7` | DeepBook pool badge, integration indicators |
-| `--color-cetus` | `text-cetus` | `#F97316` | Cetus pool badge |
-| `--color-turbos` | `text-turbos` | `#8B5CF6` | Turbos pool badge |
+| `--color-cetus` | `text-cetus` | `#F97316` | Cetus CLMM pool badge |
+| `--color-cetus-dlmm` | `text-cetus-dlmm` | `#E87A0D` | Cetus DLMM pool badge (darker orange, distinguished from CLMM) |
+| `--color-turbos` | `text-turbos` | `#8B5CF6` | Turbos CLMM pool badge |
 
 ### Text Palette
 
@@ -79,7 +80,8 @@ Each DEX gets a distinct color for badges, pool table cells, and position cards:
 |-----|-----------|-------|---------------|
 | DeepBook | `--color-deepbook` | `#6C5CE7` | `text-deepbook bg-deepbook/10 rounded-full px-2 py-0.5 text-[10px]` |
 | Turbos | `--color-turbos` | `#8B5CF6` | `text-turbos bg-turbos/10 ...` |
-| Cetus | `--color-cetus` | `#F97316` | `text-cetus bg-cetus/10 ...` |
+| Cetus CLMM | `--color-cetus` | `#F97316` | `text-cetus bg-cetus/10 ...` |
+| Cetus DLMM | `--color-cetus-dlmm` | `#E87A0D` | `text-cetus-dlmm bg-cetus-dlmm/10 ...` |
 
 ### Agent Status Indicators
 

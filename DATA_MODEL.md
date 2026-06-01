@@ -20,6 +20,7 @@ Immutable snapshot of a DEX pool at a point in time. Each screening cycle writes
 | `volume_24h` | DOUBLE | 24-hour trading volume |
 | `apy` | DOUBLE | Annualized percentage yield |
 | `fees_24h` | DOUBLE | 24-hour fee generation |
+| `volatility_24h` | DOUBLE | Pool volatility indicator (for trend detection) |
 | `score` | INTEGER | 0--100 composite (volume + APY + TVL) |
 | `rank` | INTEGER | Position in this scanning cycle |
 | `scanned_at` | TIMESTAMPTZ | When this snapshot was taken |
@@ -116,6 +117,24 @@ User-defined agent parameters. Mirrors on-chain `AgentConfig` Move object.
 
 **Links**: One-to-one with on-chain `AgentConfig`. Updated on-chain first, mirrored to Supabase.
 
+### 7. Decision Log
+
+Immutable audit trail. Every agent decision — from prompt to on-chain execution — recorded here. Append-only (RLS prevents UPDATE/DELETE).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `cycle_id` | TEXT NOT NULL | Agent cycle identifier |
+| `prompt_hash` | TEXT? | SHA-256 of the full prompt sent to the LLM |
+| `llm_raw_output` | TEXT? | Exact unmodified LLM response |
+| `parsed_action` | TEXT NOT NULL | What the agent parsed from the LLM output |
+| `guard_passed` | BOOLEAN | Did the Bastion guard approve this decision? |
+| `guard_violation` | TEXT? | If failed, which rule was violated |
+| `executed_on_chain` | BOOLEAN | Did the transaction actually go through? |
+| `sui_tx_digest` | TEXT? | Sui transaction digest if executed |
+| `timestamp` | TIMESTAMPTZ | When the decision was logged |
+
+**Links**: Referenced by `guard.ts` → `audit.ts`. Every decision cycle writes one row. Failed guard attempts are also recorded (guard_passed=false).
+
 ---
 
 ## Relationships
@@ -134,6 +153,9 @@ agent_events (independent, consumed by frontend via realtime)
      │
      ▼
 zk_proofs (independent, linked to Midnight via midnight_block_hash)
+      │
+      ▼
+decision_log (append-only, linked to guard.ts → audit.ts, RLS enforced)
 ```
 
 ---

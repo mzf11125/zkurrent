@@ -10,7 +10,7 @@
 
 ZKurrent is a dual-offering autonomous liquidity platform for Sui:
 
-1. **ZKurrent App** — A turnkey ZK-verified LP agent that screens pools across DeepBook, Cetus, and Turbos; opens concentrated liquidity positions; generates Midnight ZK proofs of strategy compliance; and learns from past trade outcomes.
+1. **ZKurrent App** — A turnkey ZK-verified LP agent that screens pools across 4 DEX types (DeepBook, Cetus CLMM, Cetus DLMM, Turbos); opens concentrated liquidity positions; generates Midnight ZK proofs of strategy compliance; and learns from past trade outcomes.
 
 2. **ZKurrent SDK & API** — x402-gated infrastructure layer. External AI agents and trading bots pay fractions of a cent in SUI to route through ZKurrent's ZK-shielded execution rails. No API keys. No sign-ups. Machine-to-machine micropayments.
 
@@ -170,8 +170,12 @@ SCREEN  →  DECIDE  →  EXECUTE  →  MONITOR  →  REBALANCE  →  LEARN
 │    learning-engine.ts — Historical win/loss tracking         │
 │    deepbook.ts        — DeepBook V3 SDK wrapper              │
 │    cetus.ts           — Cetus CLMM SDK wrapper               │
-│    turbos.ts          — Turbos CLMM SDK wrapper              │
 │    cetus-dlmm.ts      — Cetus DLMM SDK wrapper              │
+│    turbos.ts          — Turbos CLMM SDK wrapper              │
+│    pyth.ts            — Pyth on-chain price feeds            │
+│    sui-indexer.ts     — Whale + ecosystem event detection    │
+│    midnight.ts        — Midnight ZK proof generation         │
+│    effectstream.ts    — Cross-chain proof relay              │
 │    config.ts          — Env vars, agent params               │
 └──────────────────────────┬──────────────────────────────────┘
                            │ Sui SDK + DEX SDKs

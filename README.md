@@ -10,6 +10,8 @@ ZKurrent isn't one agent. It's the underlying current that routes capital, data,
 
 Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBook tracks + Midnight cross-chain bonus.
 
+📖 [Full PRD](./PRD.md) · [API Reference](./API.md) · [Data Model](./DATA_MODEL.md) · [Design System](./DESIGN_GUIDELINES.md) · [Agent Conventions](./AGENTS.md)
+
 ---
 
 ## Architecture
@@ -251,6 +253,8 @@ zkurrent/
 | ZK Attestation | Midnight Compact | — |
 | Agent Framework | LangChain.js + LangGraph | ^0.3 / ^0.2 |
 | LLM (optional) | DeepSeek V4 Pro (via OpenRouter) | `deepseek/deepseek-chat` |
+| Market Data | Pyth Network (Sui on-chain price feeds) | — |
+| On-Chain Activity | Sui Indexer (whale + ecosystem detection) | — |
 | Data Layer | Supabase (PostgreSQL + Realtime) | ^2.49 |
 | Pool Screening | @cetusprotocol/sui-clmm-sdk | ^1.4 |
 | DEX Integration | DeepBook V3 + Cetus CLMM + Turbos | — |
