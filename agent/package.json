@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:api": "tsx watch src/api/server.ts",
     "start": "tsx src/index.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
@@ -24,6 +25,8 @@
     "@effectstream/midnight-contracts": "latest",
     "@effectstream/batcher": "latest",
     "@supabase/supabase-js": "^2.49.0",
+    "hono": "^4.7.0",
+    "@hono/node-server": "^1.13.0",
     "zod": "^3.24.0",
     "dotenv": "^16.4.0",
     "langsmith": "^0.3.0",

@@ -1,11 +1,14 @@
 import "dotenv/config";
+import { serve } from "@hono/node-server";
 import { createSupabaseClient, getStrategyConfig } from "./integrations/supabase.js";
 import { loadAgentConfig, createSuiClient } from "./integrations/sui.js";
 import { setSenderAddress } from "./integrations/cetus.js";
 import { buildZKurrentGraph } from "./graph.js";
+import { app } from "./api/server.js";
 import type { PoolScore } from "./types.js";
 
 const INTERVAL_MS = Number(process.env.AGENT_INTERVAL_MS ?? 300_000);
+const API_PORT = Number(process.env.API_PORT ?? 4020);
 const supabase = createSupabaseClient();
 const { client: suiClient, keypair } = createSuiClient();
 
@@ -60,19 +63,32 @@ async function runAgentCycle() {
   }
 }
 
-// ── Start Agent ──
+// ── Start ──
 
 console.log("╔══════════════════════════════════════════╗");
 console.log("║         ZKurrent Agent v0.1.0            ║");
 console.log("║  Sui LP Execution + Midnight ZK Proofs    ║");
 console.log("╚══════════════════════════════════════════╝");
-console.log(`   Sender: ${keypair.toSuiAddress()}`);
-console.log(`   RPC:    ${process.env.SUI_RPC_URL ?? "testnet"}`);
-console.log(`   Cycle:  every ${INTERVAL_MS / 1000}s`);
-console.log(`   ZK:     Midnight ${process.env.MIDNIGHT_NETWORK ?? "preprod"}`);
+console.log(`   Sender:   ${keypair.toSuiAddress()}`);
+console.log(`   RPC:      ${process.env.SUI_RPC_URL ?? "testnet"}`);
+console.log(`   Agent:    every ${INTERVAL_MS / 1000}s`);
+console.log(`   API:      http://localhost:${API_PORT}`);
+console.log(`   x402:     SUI native micropayments`);
+console.log(`   ZK:       Midnight ${process.env.MIDNIGHT_NETWORK ?? "preprod"}`);
 console.log("");
 
-// Run immediately, then on interval
+// Start API server
+serve(
+  {
+    fetch: app.fetch,
+    port: API_PORT,
+  },
+  (info) => {
+    console.log(`   API server running on port ${info.port}`);
+  }
+);
+
+// Start agent loop: run immediately, then on interval
 runAgentCycle().catch(console.error);
 setInterval(runAgentCycle, INTERVAL_MS);
 
