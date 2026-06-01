@@ -1,8 +1,13 @@
 /**
- * ZKurrent Guard — Policy Engine
+ * ZKurrent Guard — Policy Engine (Fast-Path Pre-Filter)
  *
  * Validates LLM output BEFORE any on-chain execution.
  * Hardware constraints that the LLM cannot bypass.
+ *
+ * ⚠️ This is a fast-path pre-filter. Authoritative cryptographic
+ * enforcement lives in the Midnight Compact circuit (strategy_attest.compact).
+ * The ZK circuit enforces the same constraints but with cryptographic proofs
+ * that cannot be bypassed — a failed constraint means no proof can be generated.
  *
  * Inspired by Bastion's ERC-7579 validator module pattern:
  * a per-agent policy engine that sits between the AI and execution.

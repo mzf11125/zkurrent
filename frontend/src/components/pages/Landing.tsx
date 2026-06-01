@@ -10,7 +10,7 @@ import { BlurIn } from "../BlurIn.js";
 
 const FEATURES = [
   { icon: Zap, title: "Autonomous LP Agent", description: "Screens DeepBook, Cetus, and Turbos pools. Opens, manages, and rebalances positions without human intervention.", badge: "Agentic Web" },
-  { icon: Shield, title: "ZK-Verified Performance", description: "Zero-knowledge proofs on Midnight Network attest to strategy compliance and verifiable PnL — without revealing positions.", badge: "Midnight ZK" },
+  { icon: Shield, title: "Bastion Agentic Defense", description: "4-layer security: input sanitization, per-agent policy engine, ZK circuit enforcement on Midnight, and immutable decision audit trail — no prompt injection can breach position limits.", badge: "Secure AI" },
   { icon: TrendingUp, title: "Deep Learning Loop", description: "Records win/loss per pool. Weights future decisions. Improves over time. Powered by DeepSeek V4 Pro via LangChain.", badge: "AI Native" },
   { icon: Waves, title: "Multi-DEX Coverage", description: "DeepBook orderbook. Cetus CLMM & DLMM. Turbos concentrated liquidity. One agent, four DEX types, unified execution.", badge: "Sui Native" },
 ];

@@ -405,29 +405,54 @@ module zkurrent::zk_prover {
 
 ZKurrent uses **Midnight Network's Compact circuits** for ZK attestations. The LP agent executes trades on Sui; the ZK proofs live on Midnight's private ledger.
 
+**Dual enforcement model**: The TypeScript guard (`security/guard.ts`) is a fast-path pre-filter. The Midnight Compact circuit (`strategy_attest.compact`) is the authoritative cryptographic enforcement layer. If someone bypasses the TS guard or modifies the code, the ZK circuit still catches violations — and the proof _cannot be generated_ because the constraint fails.
+
 Two Compact contracts:
 
 #### strategy_attest.compact
 
 ```compact
-// Verifies that LP operations comply with user-configured AgentConfig
-// Public: proof hash + config hash. Private: actual position parameters.
+// Authoritative cryptographic enforcement of ALL guard policy rules.
+// This circuit cannot be bypassed — if any constraint fails,
+// the proof is not generatable. 5 constraints enforced.
 
 circuit StrategyAttestation {
-    // Public inputs — visible on-chain
-    public config_hash: Hash;        // SHA-256 of AgentConfig
-    public position_count: UInt;     // Number of positions in this batch
+    // ── Public inputs (visible on Midnight ledger) ──
+    public config_hash: Hash;
+    public total_positions: UInt;
+    public dex_counts: (UInt, UInt, UInt, UInt);  // deepbook, turbos, cetus_clmm, cetus_dlmm
+    public any_pool_blocked: Bool;
+    public any_pool_not_allowed: Bool;
 
-    // Private witnesses — never leave the circuit
-    witness position_ranges: Array<(Price, Price)>;
-    witness entry_prices: Array<Price>;
-    witness exit_prices: Array<Price>;
-    witness amounts: Array<Amount>;
-    witness max_il_breached: Array<Bool>;
+    // ── Private witnesses (never touch the chain) ──
+    witness positions: Array<{
+        pool_id: Hash,
+        dex_index: UInt,
+        range_low: Price,
+        range_high: Price,
+        entry_price: Price,
+        amount: Amount,
+        il_breached: Bool,
+    }>;
 
-    // Constraint: no position exceeded the config's max_il_threshold
-    constraint forall i in 0..position_count:
-        max_il_breached[i] == false;
+    // ── Constraint 1: no position exceeded IL threshold ──
+    constraint forall p in positions:
+        p.il_breached == false;
+
+    // ── Constraint 2: no position on a blocked pool ──
+    constraint any_pool_blocked == false;
+
+    // ── Constraint 3: all positions on allowlisted pools ──
+    constraint any_pool_not_allowed == false;
+
+    // ── Constraint 4: DEX diversification (max 3 per DEX) ──
+    constraint dex_counts[0] <= 3;   // deepbook
+    constraint dex_counts[1] <= 3;   // turbos
+    constraint dex_counts[2] <= 3;   // cetus_clmm
+    constraint dex_counts[3] <= 3;   // cetus_dlmm
+
+    // ── Constraint 5: total position limit (max 20) ──
+    constraint total_positions <= 20;
 }
 ```
 

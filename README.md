@@ -210,6 +210,19 @@ zkurrent/
 
 ---
 
+## Security — Bastion Agentic Defense
+
+ZKurrent inherits Bastion's ERC-7579 per-agent policy engine with 4 defense layers:
+
+| Layer | Purpose | Where |
+|-------|---------|-------|
+| 1. **Input Sanitization** | Strips prompt injection vectors from pool names, token pairs, whale events | `security/sanitize.ts` |
+| 2. **Guard Policy** | Validates every LLM output against 7 hardware constraints (action allowlist, pool blocklist, IL bounds, DEX ≤3, position limit, consecutive opens, circuit breaker) | `security/guard.ts` |
+| 3. **ZK Circuit** | Authoritative cryptographic enforcement on Midnight — 5 constraints in `strategy_attest.compact` that cannot be bypassed (proof generation fails if violated) | Midnight Compact |
+| 4. **Decision Log** | Immutable append-only audit trail — every prompt hash, LLM response, guard result, and Sui transaction recorded with RLS | `security/audit.ts` + Supabase `decision_log` |
+
+---
+
 ## Tracks
 
 | Track | How ZKurrent Qualifies |
