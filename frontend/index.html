@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="ZKurrent — ZK-Verified Autonomous LP Agent on Sui + Midnight" />
+    <link rel="api-catalog" href="/.well-known/api-catalog" />
+    <link rel="mcp-server" href="/.well-known/mcp" />
+    <link rel="agent-skills" href="/.well-known/agent-skills/index.json" />
+    <link rel="llms" href="/llms.txt" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,5 +17,47 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      // WebMCP — expose ZKurrent tools to AI agents via browser
+      // Spec: https://webmachinelearning.github.io/webmcp/
+      if ("modelContext" in navigator) {
+        const ctx = navigator.modelContext;
+        ctx.provideContext({
+          tools: [
+            {
+              name: "screen_pools",
+              description: "Screen all LP pools across DeepBook, Cetus CLMM, Cetus DLMM, and Turbos on Sui. Returns top 10 ranked by composite score.",
+              inputSchema: { type: "object", properties: {} },
+              execute: async () => {
+                const res = await fetch("/api/v1/pools/latest");
+                return res.ok ? await res.json() : { error: res.statusText };
+              },
+            },
+            {
+              name: "verify_proof",
+              description: "Verify a ZK strategy compliance proof on Midnight Network.",
+              inputSchema: {
+                type: "object",
+                properties: { proofHash: { type: "string" } },
+                required: ["proofHash"],
+              },
+              execute: async ({ proofHash }) => {
+                const res = await fetch(`/api/v1/proof/${proofHash}`);
+                return res.ok ? await res.json() : { error: res.statusText };
+              },
+            },
+            {
+              name: "get_agent_status",
+              description: "Get ZKurrent agent heartbeat: active positions, TVL, cumulative PnL.",
+              inputSchema: { type: "object", properties: {} },
+              execute: async () => {
+                const res = await fetch("/api/v1/agent/health");
+                return res.ok ? await res.json() : { error: res.statusText };
+              },
+            },
+          ],
+        });
+      }
+    </script>
   </body>
 </html>

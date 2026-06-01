@@ -1,4 +1,4 @@
-# ZKurrent Agent Registration
+# Auth.md — ZKurrent Agent Registration
 
 > ZKurrent uses **x402 micropayments** for authentication — no OAuth, no API keys, no sign-ups.
 
@@ -39,7 +39,3 @@ Payments are valid for 15 minutes from transaction timestamp. After expiry, a ne
 ## Revocation
 
 No revocation needed. Each payment is a one-time proof tied to a specific transaction digest. Replay is prevented by the 15-minute expiry window.
-
----
-
-*Auth.md v0.1 — [spec](https://workos.com/auth-md) · Valid at `https://zkurrent.xyz/auth.md`*
