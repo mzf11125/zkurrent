@@ -1,19 +1,13 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Waves, TrendingUp, Shield, Zap, ArrowRight } from "lucide-react";
 import { Button } from "../ui/Button.js";
 import { Card } from "../ui/Card.js";
 import { Badge } from "../ui/Badge.js";
 import { Navbar } from "../layout/Navbar.js";
+import { WordsPullUp } from "../WordsPullUp.js";
+import { BlurIn } from "../BlurIn.js";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] as never },
-  }),
-};
 
 const FEATURES = [
   { icon: Zap, title: "Autonomous LP Agent", description: "Screens DeepBook, Cetus, and Turbos pools. Opens, manages, and rebalances positions without human intervention.", badge: "Agentic Web" },
@@ -30,6 +24,10 @@ const STEPS = [
 ];
 
 export function LandingPage() {
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 600], [0, -60]);
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+
   return (
     <div className="relative min-h-screen bg-bg">
       <div className="cinematic-orb orb-1" />
@@ -37,92 +35,74 @@ export function LandingPage() {
       <div className="cinematic-orb orb-3" />
       <div
         className="fixed inset-0 pointer-events-none z-[1]"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(0,4,31,0.65) 0%, rgba(0,4,31,0.4) 40%, rgba(0,4,31,0.85) 100%)",
-        }}
+        style={{ background: "linear-gradient(to bottom, rgba(0,4,31,0.65) 0%, rgba(0,4,31,0.4) 40%, rgba(0,4,31,0.85) 100%)" }}
       />
+      {/* KREDZ noise texture */}
+      <svg className="fixed inset-0 w-full h-full z-[2] pointer-events-none" style={{ mixBlendMode: "overlay", opacity: 0.7 }}>
+        <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter>
+        <rect width="100%" height="100%" filter="url(#noise)" opacity="0.3"/>
+      </svg>
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative z-10 pt-36 pb-28 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.12 } },
-            }}
-          >
-            <motion.div variants={fadeUp} custom={0}>
-              <Badge variant="sui">Sui Overflow 2026</Badge>
-            </motion.div>
-            <motion.h1
-              variants={fadeUp}
-              custom={1}
-              className="mt-6 text-5xl md:text-7xl font-medium text-text leading-[1.1]"
-            >
-              Autonomous LP Agent
-              <br />
-              <span className="text-gradient">Zero-Knowledge Verified</span>
-            </motion.h1>
-            <motion.p
-              variants={fadeUp}
-              custom={2}
-              className="mt-6 text-lg text-text-secondary max-w-2xl mx-auto"
-            >
+      <section className="relative z-10 pt-36 pb-28 px-6 overflow-hidden">
+        <motion.div
+          className="max-w-6xl mx-auto text-center"
+          style={{ y: heroY, opacity: heroOpacity }}
+        >
+          <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-medium text-text leading-[0.95] tracking-[-0.04em]">
+            <WordsPullUp
+              text="The Autonomous Liquidity Current"
+              gradientWords={["Autonomous", "Liquidity", "Current"]}
+            />
+          </h1>
+
+          <BlurIn className="mt-8">
+            <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
               ZKurrent screens pools, opens positions, proves strategy compliance
-              via Midnight ZK proofs, and learns from every trade — autonomously on
-              Sui.
-            </motion.p>
-            <motion.div
-              variants={fadeUp}
-              custom={3}
-              className="mt-10 flex items-center justify-center gap-4 flex-wrap"
-            >
+              via Midnight ZK proofs, and learns from every trade — autonomously on Sui.
+            </p>
+          </BlurIn>
+
+          <BlurIn duration={1.4} className="mt-12">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link to="/dashboard">
-                <Button size="lg">
+                <button className="glow-btn rounded-full bg-sui hover:bg-sui-hover text-white font-medium text-sm px-8 py-3.5 transition-all duration-300 inline-flex items-center gap-2">
                   Launch App <ArrowRight className="w-4 h-4" />
-                </Button>
+                </button>
               </Link>
               <a href="https://github.com/mzf11125/zkurrent" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" variant="secondary">
+                <button className="rounded-full bg-[#1A1A1A] border border-text/5 text-text-muted hover:text-text hover:bg-card-hover hover:border-text/10 font-medium text-sm px-8 py-3.5 transition-all duration-200">
                   View on GitHub
-                </Button>
+                </button>
               </a>
-            </motion.div>
-          </motion.div>
+            </div>
+          </BlurIn>
 
           {/* Trusted by */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { delay: 1.2, duration: 0.6 } }}
-            className="mt-16 flex items-center justify-center gap-8 text-text-muted text-xs uppercase tracking-[0.2em]"
+            animate={{ opacity: 1, transition: { delay: 1.2, duration: 0.8 } }}
+            className="mt-20 flex items-center justify-center gap-8 text-text-muted text-xs uppercase tracking-[0.2em]"
           >
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-deepbook" /> DeepBook V3</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-cetus" /> Cetus CLMM</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-turbos" /> Turbos</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-sui" /> Midnight ZK</span>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Features ── */}
       <section className="relative z-10 py-28 px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+          <BlurIn className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-medium text-text">Why ZKurrent</h2>
             <p className="mt-4 text-text-secondary max-w-xl mx-auto">
               Meridian for Sui — with ZK proofs. Autonomous LP management across
               three DEXes, verifiable on Midnight.
             </p>
-          </motion.div>
+          </BlurIn>
 
           <div className="grid md:grid-cols-2 gap-6">
             {FEATURES.map((f, i) => (
@@ -155,14 +135,9 @@ export function LandingPage() {
       {/* ── How It Works ── */}
       <section className="relative z-10 py-28 px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-medium text-text text-center mb-16"
-          >
-            How It Works
-          </motion.h2>
+          <BlurIn className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-medium text-text">How It Works</h2>
+          </BlurIn>
 
           <div className="grid md:grid-cols-4 gap-6">
             {STEPS.map((s, i) => (
@@ -188,14 +163,9 @@ export function LandingPage() {
       {/* ── Two Ways to Use ── */}
       <section className="relative z-10 py-28 px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-medium text-text text-center mb-16"
-          >
-            Two Ways to Use ZKurrent
-          </motion.h2>
+          <BlurIn className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-medium text-text">Two Ways to Use ZKurrent</h2>
+          </BlurIn>
           <div className="grid md:grid-cols-2 gap-6">
             <motion.div
               initial={{ opacity: 0, x: -24 }}

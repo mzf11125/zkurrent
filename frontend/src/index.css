@@ -65,3 +65,11 @@ body {
   50% { box-shadow: 0 0 20px rgba(77,162,255,0.5); }
 }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+/* KREDZ glow button */
+.glow-btn {
+  box-shadow: 0 4px 60px 4px rgba(77,162,255,0.08);
+}
+.glow-btn:hover {
+  box-shadow: 0 4px 80px 8px rgba(77,162,255,0.12);
+}
