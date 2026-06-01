@@ -12,7 +12,7 @@ const FEATURES = [
   { icon: Zap, title: "Autonomous LP Agent", description: "Screens DeepBook, Cetus, and Turbos pools. Opens, manages, and rebalances positions without human intervention.", badge: "Agentic Web" },
   { icon: Shield, title: "ZK-Verified Performance", description: "Zero-knowledge proofs on Midnight Network attest to strategy compliance and verifiable PnL — without revealing positions.", badge: "Midnight ZK" },
   { icon: TrendingUp, title: "Deep Learning Loop", description: "Records win/loss per pool. Weights future decisions. Improves over time. Powered by DeepSeek V4 Pro via LangChain.", badge: "AI Native" },
-  { icon: Waves, title: "Multi-DEX Coverage", description: "DeepBook orderbook. Cetus CLMM & DLMM. Turbos concentrated liquidity. One agent, four DEXes, true Meridian parity.", badge: "Sui Native" },
+  { icon: Waves, title: "Multi-DEX Coverage", description: "DeepBook orderbook. Cetus CLMM & DLMM. Turbos concentrated liquidity. One agent, four DEX types, unified execution.", badge: "Sui Native" },
 ];
 
 const STEPS = [
@@ -99,8 +99,7 @@ export function LandingPage() {
           <BlurIn className="text-center mb-12 md:mb-16">
             <h2 className="text-2xl md:text-4xl font-medium text-text">Why ZKurrent</h2>
             <p className="mt-3 md:mt-4 text-sm md:text-base text-text-secondary max-w-xl mx-auto">
-              Meridian for Sui — with ZK proofs. Autonomous LP management across
-              three DEXes, verifiable on Midnight.
+              Autonomous LP management across four DEX types — orderbook, CLMM, DLMM — with ZK proofs on Midnight.
             </p>
           </BlurIn>
 
