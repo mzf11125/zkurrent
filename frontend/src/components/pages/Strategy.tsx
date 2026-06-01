@@ -82,7 +82,7 @@ export function StrategyPage() {
             ].map((p) => (
               <div
                 key={`${p.dex}-${p.pool}`}
-                className={`flex items-center justify-between p-3 rounded-xl transition-colors ${p.checked ? "bg-sui/5 outline outline-1 outline-sui/20" : "bg-input opacity-50"}`}
+                className={`flex items-center justify-between p-3 rounded-xl transition-colors ${p.checked ? "bg-sui/5 border border-sui/20" : "bg-input opacity-50"}`}
               >
                 <div className="flex items-center gap-2">
                   <Badge variant={p.dex}>{p.dex}</Badge>

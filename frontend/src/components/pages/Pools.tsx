@@ -32,7 +32,7 @@ export function PoolsPage() {
         </div>
       </motion.div>
 
-      <div className="mt-8 bg-card rounded-3xl outline outline-1 outline-text/5 overflow-hidden">
+      <div className="mt-8 bg-card rounded-3xl border border-text/5 overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="text-text-muted text-xs uppercase tracking-[0.2em] border-b border-text/5">

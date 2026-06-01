@@ -7,7 +7,7 @@ interface MetricCardProps {
 
 export function MetricCard({ label, value, gradient, trend }: MetricCardProps) {
   return (
-    <div className="bg-card rounded-3xl p-6 outline outline-1 outline-text/5">
+    <div className="bg-card rounded-3xl p-6 border border-text/5">
       <span className="text-xs font-medium uppercase tracking-[0.2em] text-text-muted">
         {label}
       </span>

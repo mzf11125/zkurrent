@@ -1,14 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Waves, TrendingUp, Shield, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Waves, TrendingUp, Shield, Zap, ArrowRight } from "lucide-react";
 import { Button } from "../ui/Button.js";
 import { Card } from "../ui/Card.js";
 import { Badge } from "../ui/Badge.js";
 import { Navbar } from "../layout/Navbar.js";
-
-import { type Transition, type Variants } from "framer-motion";
-
-const ease: Transition["ease"] = [0.16, 1, 0.3, 1] as never;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },

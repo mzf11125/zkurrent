@@ -1,61 +1,46 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Base ── */
   --color-bg: #000000;
   --color-card: #101010;
   --color-card-hover: #151515;
   --color-card-elevated: #1A1A1A;
   --color-input: #0A0A0A;
-
-  /* ── Accents ── */
   --color-sui: #4DA2FF;
   --color-sui-hover: #0072E5;
-  --color-sui-glow: rgba(77, 162, 255, 0.12);
   --color-profit: #2DD4BF;
-  --color-profit-dim: rgba(45, 212, 191, 0.6);
   --color-loss: #FF6B6B;
-  --color-loss-dim: rgba(255, 107, 107, 0.6);
   --color-deepbook: #6C5CE7;
   --color-cetus: #F97316;
   --color-turbos: #8B5CF6;
-
-  /* ── Text ── */
   --color-text: rgba(225, 224, 204, 0.9);
   --color-text-secondary: rgba(225, 224, 204, 0.6);
   --color-text-muted: rgba(225, 224, 204, 0.4);
   --color-text-dim: rgba(225, 224, 204, 0.2);
-
-  /* ── Glass ── */
   --color-glass: rgba(30, 30, 30, 0.8);
   --color-glass-border: rgba(222, 219, 200, 0.08);
-
-  /* ── Fonts ── */
   --font-manrope: 'Manrope', 'Inter', system-ui, sans-serif;
   --font-mono: 'Geist Mono', 'SF Mono', 'Consolas', monospace;
-
-  /* ── Spacing ── */
   --radius-card: 1.5rem;
 }
 
-/* ── Base ── */
 body {
   font-family: var(--font-manrope);
-  background: var(--color-bg);
+  background: #000000;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   margin: 0;
 }
 
-/* ── Glass ── */
+/* Glass — KREDZ pattern: rgba(30,30,30,0.8) + blur(12px) + border */
 .glass {
-  background: var(--color-glass);
+  background: rgba(30, 30, 30, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  outline: 1px solid var(--color-glass-border);
+  border: 1px solid rgba(222, 219, 200, 0.08);
 }
 
-/* ── Text Gradient ── */
+/* Text gradient — Sui blue → teal */
 .text-gradient {
   background: linear-gradient(135deg, #4DA2FF, #2DD4BF, #4DA2FF);
   -webkit-background-clip: text;
@@ -63,32 +48,20 @@ body {
   background-clip: text;
 }
 
-/* ── Cinematic Orbs ── */
-.cinematic-orb {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(120px);
-}
+/* Cinematic orbs */
+.cinematic-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(120px); }
 .orb-1 { top: -20%; right: -10%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(77,162,255,0.06), transparent 70%); }
 .orb-2 { bottom: -20%; left: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(45,212,191,0.04), transparent 70%); }
 .orb-3 { top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100%; height: 100%; background: radial-gradient(ellipse at 50% 50%, rgba(77,162,255,0.03) 0%, transparent 65%); mix-blend-mode: screen; }
 
-/* ── Scrollbar ── */
+/* KREDZ scrollbar */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--color-input); }
+::-webkit-scrollbar-track { background: #0A0A0A; }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
-/* ── Keyframes ── */
+/* Pulse glow — KREDZ CTAs */
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 8px rgba(77,162,255,0.3); }
   50% { box-shadow: 0 0 20px rgba(77,162,255,0.5); }
 }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-.animate-float { animation: float 6s ease-in-out infinite; }

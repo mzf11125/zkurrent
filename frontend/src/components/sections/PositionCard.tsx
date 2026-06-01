@@ -15,7 +15,7 @@ interface PositionCardProps {
 
 export function PositionCard({ pool, dex, fees, il, net, range, status }: PositionCardProps) {
   return (
-    <div className="bg-card rounded-3xl p-6 outline outline-1 outline-text/5">
+    <div className="bg-card rounded-3xl p-6 border border-text/5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Badge variant={dex}>{dex}</Badge>
