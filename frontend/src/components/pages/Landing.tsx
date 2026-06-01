@@ -12,7 +12,7 @@ const FEATURES = [
   { icon: Zap, title: "Autonomous LP Agent", description: "Screens DeepBook, Cetus, and Turbos pools. Opens, manages, and rebalances positions without human intervention.", badge: "Agentic Web" },
   { icon: Shield, title: "ZK-Verified Performance", description: "Zero-knowledge proofs on Midnight Network attest to strategy compliance and verifiable PnL — without revealing positions.", badge: "Midnight ZK" },
   { icon: TrendingUp, title: "Deep Learning Loop", description: "Records win/loss per pool. Weights future decisions. Improves over time. Powered by DeepSeek V4 Pro via LangChain.", badge: "AI Native" },
-  { icon: Waves, title: "Multi-DEX Coverage", description: "DeepBook orderbook. Cetus CLMM. Turbos concentrated liquidity. One agent, three DEXes, optimal allocation.", badge: "Sui Native" },
+  { icon: Waves, title: "Multi-DEX Coverage", description: "DeepBook orderbook. Cetus CLMM & DLMM. Turbos concentrated liquidity. One agent, four DEXes, true Meridian parity.", badge: "Sui Native" },
 ];
 
 const STEPS = [
@@ -86,6 +86,7 @@ export function LandingPage() {
           >
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-deepbook" /> DeepBook V3</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-cetus" /> Cetus CLMM</span>
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#E879F9]" /> Cetus DLMM</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-turbos" /> Turbos</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-sui" /> Midnight ZK</span>
           </motion.div>
@@ -221,7 +222,7 @@ export function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { label: "DEXes", value: "3", trend: "up" as const },
+              { label: "DEXes", value: "4", trend: "up" as const },
               { label: "ZK Circuits", value: "2", trend: "up" as const },
               { label: "Target APY", value: "15%+", trend: "up" as const },
               { label: "Agent Tracks", value: "3", trend: "up" as const },

@@ -2,15 +2,16 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { screenDeepBookPools } from "../integrations/deepbook.js";
 import { screenCetusPools } from "../integrations/cetus.js";
-import type { PoolScore } from "../types.js";
+import { screenCetusDlmmPools } from "../integrations/cetus-dlmm.js";
 
 export async function screenPools(): Promise<PoolScore[]> {
-  const [deepbook, cetus] = await Promise.all([
+  const [deepbook, cetus, cetusDlmm] = await Promise.all([
     screenDeepBookPools().catch(() => [] as PoolScore[]),
     screenCetusPools().catch(() => [] as PoolScore[]),
+    screenCetusDlmmPools().catch(() => [] as PoolScore[]),
   ]);
 
-  const all = [...deepbook, ...cetus];
+  const all = [...deepbook, ...cetus, ...cetusDlmm];
 
   const scored = all.map((pool) => {
     const volumeScore = clamp(pool.volume24h / 1_000_000, 0, 40);

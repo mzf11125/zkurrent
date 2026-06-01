@@ -6,11 +6,11 @@ export type CycleStatus = "idle" | "screening" | "deciding" | "executing" | "mon
 
 // ── Pool Screening ──
 
-export type Dex = "deepbook" | "turbos" | "cetus";
+export type Dex = "deepbook" | "turbos" | "cetus" | "cetus_dlmm";
 
 export const PoolScoreSchema = z.object({
   poolId: z.string(),
-  dex: z.enum(["deepbook", "turbos", "cetus"]),
+  dex: z.enum(["deepbook", "turbos", "cetus", "cetus_dlmm"]),
   tokenPair: z.string(),
   tvl: z.number(),
   volume24h: z.number(),
@@ -28,7 +28,7 @@ export type PoolScore = z.infer<typeof PoolScoreSchema>;
 export const PositionRecordSchema = z.object({
   positionId: z.string(),
   poolId: z.string(),
-  dex: z.enum(["deepbook", "turbos", "cetus"]),
+  dex: z.enum(["deepbook", "turbos", "cetus", "cetus_dlmm"]),
   tokenPair: z.string(),
   amountIn: z.number(),
   amountInUsd: z.number(),
@@ -72,7 +72,7 @@ export const CycleOutcomeSchema = z.object({
   cycleId: z.string(),
   action: z.enum(["open", "close", "rebalance", "hold", "skip"]),
   poolId: z.string().optional(),
-  dex: z.enum(["deepbook", "turbos", "cetus"]).optional(),
+  dex: z.enum(["deepbook", "turbos", "cetus", "cetus_dlmm"]).optional(),
   feesEarned: z.number().optional(),
   impermanentLoss: z.number().optional(),
   netPnl: z.number().optional(),
@@ -97,7 +97,8 @@ export type ZKProofRecord = z.infer<typeof ZKProofRecordSchema>;
 
 export const AgentEventSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("pool:screened"), poolCount: z.number(), topPool: z.string(), timestamp: z.string() }),
-  z.object({ type: z.literal("position:opened"), poolId: z.string(), dex: z.enum(["deepbook", "turbos", "cetus"]), tokenPair: z.string(), rangeLow: z.number(), rangeHigh: z.number(), txDigest: z.string(), timestamp: z.string() }),
+  z.object({ type: z.literal("position:opened"), poolId: z.string(),   dex: z.enum(["deepbook", "turbos", "cetus", "cetus_dlmm"]),
+  tokenPair: z.string(), rangeLow: z.number(), rangeHigh: z.number(), txDigest: z.string(), timestamp: z.string() }),
   z.object({ type: z.literal("position:closed"), positionId: z.string(), fees: z.number(), il: z.number(), netPnl: z.number(), txDigest: z.string(), timestamp: z.string() }),
   z.object({ type: z.literal("position:rebalanced"), oldPositionId: z.string(), newPoolId: z.string(), reason: z.string(), timestamp: z.string() }),
   z.object({ type: z.literal("zk:proof_generated"), proofType: z.enum(["strategy_compliance", "performance"]), proofHash: z.string(), timestamp: z.string() }),

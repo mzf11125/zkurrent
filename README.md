@@ -6,7 +6,7 @@
 >
 > • **For Builders**: x402-gated SDK & API. Other bots and agents pay fractions of a cent to route through ZKurrent's privacy-preserving execution rails. No API keys. No sign-ups. Machine-to-machine micropayments.
 
-ZKurrent isn't one agent. It's the underlying current that routes capital, data, and privacy for every agent on the network.
+ZKurrent isn't one agent. It's the underlying current that routes capital, data, and privacy for every agent on the network. Covering 4 Sui DEXes: DeepBook (orderbook) · Cetus CLMM · Cetus DLMM · Turbos CLMM.
 
 Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBook tracks + Midnight cross-chain bonus.
 
@@ -239,7 +239,7 @@ zkurrent/
 | | Toby (LP-AI-Agent) | ZKurrent |
 |---|---|---|
 | Framework | ElizaOS plugin wrapper | Native Sui Move + TypeScript agent |
-| DEX support | Cetus only | Cetus + Turbos + **DeepBook** |
+| DEX support | Cetus only | Cetus CLMM + Cetus DLMM + Turbos + **DeepBook** |
 | DeepBook | No | **Yes** |
 | On-chain logic | None (API-only) | **Move contracts** |
 | ZK proofs | No | **Yes** — strategy compliance + performance |

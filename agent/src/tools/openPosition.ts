@@ -20,7 +20,7 @@ export const openPositionTool = tool(
       "Open a new LP position on a selected pool. Requires pool ID, DEX name, and token pair.",
     schema: z.object({
       poolId: z.string().describe("The pool ID to open position on"),
-      dex: z.enum(["deepbook", "turbos", "cetus"]).describe("The DEX to use"),
+      dex: z.enum(["deepbook", "turbos", "cetus", "cetus_dlmm"]).describe("The DEX to use"),
       tokenPair: z.string().describe("Token pair, e.g. SUI/USDC"),
     }),
   }

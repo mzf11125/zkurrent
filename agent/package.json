@@ -20,6 +20,7 @@
     "@midnight-ntwrk/midnight-js": "^0.3.0",
     "@midnight-ntwrk/compact-runtime": "^0.3.0",
     "@cetusprotocol/sui-clmm-sdk": "^1.4.5",
+    "@cetusprotocol/dlmm-sdk": "^1.2.9",
     "@effectstream/node-sdk": "latest",
     "@effectstream/sync": "latest",
     "@effectstream/midnight-contracts": "latest",

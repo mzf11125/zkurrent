@@ -171,6 +171,7 @@ SCREEN  →  DECIDE  →  EXECUTE  →  MONITOR  →  REBALANCE  →  LEARN
 │    deepbook.ts        — DeepBook V3 SDK wrapper              │
 │    cetus.ts           — Cetus CLMM SDK wrapper               │
 │    turbos.ts          — Turbos CLMM SDK wrapper              │
+│    cetus-dlmm.ts      — Cetus DLMM SDK wrapper              │
 │    config.ts          — Env vars, agent params               │
 └──────────────────────────┬──────────────────────────────────┘
                            │ Sui SDK + DEX SDKs
