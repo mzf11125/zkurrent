@@ -1,10 +1,16 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/.well-known/api-catalog", "destination": "/.well-known/api-catalog" },
+    { "source": "/.well-known/mcp", "destination": "/.well-known/mcp" },
+    { "source": "/.well-known/oauth-protected-resource", "destination": "/.well-known/oauth-protected-resource" },
+    { "source": "/.well-known/oauth-authorization-server", "destination": "/.well-known/oauth-authorization-server" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/",
       "headers": [
-        { "key": "Link", "value": "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/mcp>; rel=\"mcp-server\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\", </auth.md>; rel=\"agent-auth\", </llms.txt>; rel=\"llms\"" }
+        { "key": "Link", "value": "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/mcp>; rel=\"mcp-server\", </.well-known/agent-skills/index>; rel=\"agent-skills\", </auth.md>; rel=\"agent-auth\", </llms.txt>; rel=\"llms\", </index.md>; rel=\"alternate\"; type=\"text/markdown\"" }
       ]
     },
     {
@@ -36,9 +42,22 @@
       ]
     },
     {
+      "source": "/index.md",
+      "headers": [
+        { "key": "Content-Type", "value": "text/markdown; charset=utf-8" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         { "key": "Vary", "value": "Accept" }
+      ]
+    },
+    {
+      "source": "/.well-known/api-catalog",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Content-Type", "value": "application/linkset+json; charset=utf-8" }
       ]
     },
     {
@@ -46,18 +65,6 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Content-Type", "value": "application/json; charset=utf-8" }
-      ]
-    },
-    {
-      "source": "/.well-known/api-catalog",
-      "headers": [
-        { "key": "Content-Type", "value": "application/linkset+json; charset=utf-8" }
-      ]
-    },
-    {
-      "source": "/index.md",
-      "headers": [
-        { "key": "Content-Type", "value": "text/markdown; charset=utf-8" }
       ]
     }
   ],

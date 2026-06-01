@@ -1,0 +1,7 @@
+{
+  "resource": "https://api.zkurrent.xyz",
+  "authorization_servers": ["https://zkurrent.xyz/.well-known/oauth-authorization-server"],
+  "scopes_supported": ["pools:read", "proofs:verify", "agent:read"],
+  "bearer_methods_supported": ["x402"],
+  "resource_documentation": "https://github.com/mzf11125/zkurrent/blob/main/API.md"
+}

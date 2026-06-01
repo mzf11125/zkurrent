@@ -1,0 +1,14 @@
+{
+  "issuer": "https://zkurrent.xyz",
+  "authorization_endpoint": "https://zkurrent.xyz/api/v1/auth",
+  "token_endpoint": "https://zkurrent.xyz/api/v1/auth/token",
+  "grant_types_supported": ["x402-sui-payment"],
+  "response_types_supported": ["x402"],
+  "agent_auth": {
+    "register_uri": "https://zkurrent.xyz/auth.md",
+    "identity_types": ["sui_address"],
+    "credential_types": ["x402-sui-payment"],
+    "claim_url": "https://zkurrent.xyz/api/v1/auth/claim",
+    "revocation_url": "https://zkurrent.xyz/api/v1/auth/revoke"
+  }
+}

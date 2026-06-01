@@ -1,0 +1,36 @@
+{
+  "serverInfo": {
+    "name": "zkurrent",
+    "version": "0.1.0",
+    "description": "ZK-verified autonomous LP agent for Sui. Screen pools, verify ZK proofs, query agent status.",
+    "homepage": "https://zkurrent.xyz"
+  },
+  "transport": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@zkurrent/mcp"]
+  },
+  "capabilities": { "tools": true },
+  "tools": [
+    {
+      "name": "screen_pools",
+      "description": "Screen LP pools across DeepBook, Cetus CLMM, Cetus DLMM, and Turbos. Top 10 ranked.",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "verify_proof",
+      "description": "Verify a ZK proof on Midnight Network.",
+      "inputSchema": { "type": "object", "properties": { "proofHash": { "type": "string" } }, "required": ["proofHash"] }
+    },
+    {
+      "name": "get_agent_status",
+      "description": "ZKurrent agent heartbeat: positions, TVL, PnL.",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "get_pool_history",
+      "description": "Historical win/loss for a pool.",
+      "inputSchema": { "type": "object", "properties": { "poolId": { "type": "string" } }, "required": ["poolId"] }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.zkurrent.xyz",
+      "service-desc": "https://github.com/mzf11125/zkurrent/blob/main/API.md",
+      "service-doc": "https://github.com/mzf11125/zkurrent/blob/main/API.md",
+      "status": "https://zkurrent.xyz/api/v1/agent/health",
+      "mcp-server": "https://zkurrent.xyz/.well-known/mcp",
+      "agent-skills": "https://zkurrent.xyz/.well-known/agent-skills/index",
+      "authentication": {
+        "type": "x402",
+        "scheme": "SUI-native-micropayment",
+        "paymentAddress": "SUI_ADDRESS"
+      }
+    }
+  ]
+}
