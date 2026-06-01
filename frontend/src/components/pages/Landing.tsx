@@ -44,9 +44,9 @@ export function LandingPage() {
       <Navbar />
 
       {/* ── Hero — full viewport, centered ── */}
-      <section className="relative z-10 flex min-h-screen items-center justify-center px-4 md:px-6 overflow-hidden">
+      <section className="relative z-10 flex min-h-[calc(100vh-64px)] items-center justify-center px-4 md:px-6 overflow-hidden">
         <motion.div
-          className="w-full max-w-6xl mx-auto text-center -mt-16"
+          className="max-w-6xl mx-auto text-center"
           style={{ y: heroY, opacity: heroOpacity }}
         >
           <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-medium text-text leading-[0.95] tracking-[-0.04em]">
