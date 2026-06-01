@@ -1,0 +1,69 @@
+{
+  "apiVersion": "1.0",
+  "title": "ZKurrent API",
+  "description": "ZK-verified autonomous LP agent for Sui. x402-gated endpoints for pool screening, ZK proof verification, and agent status.",
+  "baseUrl": "https://api.zkurrent.xyz",
+  "authentication": {
+    "type": "x402",
+    "description": "SUI native coin micropayment. Include tx digest in Authorization header.",
+    "pricing": {
+      "proof_verify": "0.01 SUI",
+      "pools_latest": "0.005 SUI",
+      "agent_status": "0.005 SUI",
+      "position_history": "0.005 SUI"
+    }
+  },
+  "endpoints": [
+    {
+      "path": "/api/v1/pools/latest",
+      "method": "GET",
+      "description": "Latest pool screening results",
+      "x402": true,
+      "price": "0.005 SUI"
+    },
+    {
+      "path": "/api/v1/proof/verify",
+      "method": "POST",
+      "description": "Verify ZK proof on Midnight Network",
+      "x402": true,
+      "price": "0.01 SUI"
+    },
+    {
+      "path": "/api/v1/agent/status",
+      "method": "GET",
+      "description": "Agent heartbeat and metrics",
+      "x402": true,
+      "price": "0.005 SUI"
+    },
+    {
+      "path": "/api/v1/agent/position-history",
+      "method": "GET",
+      "description": "Closed LP position history",
+      "x402": true,
+      "price": "0.005 SUI"
+    },
+    {
+      "path": "/api/v1/agent/health",
+      "method": "GET",
+      "description": "Free health check",
+      "x402": false
+    },
+    {
+      "path": "/api/v1/proof/:hash",
+      "method": "GET",
+      "description": "Check ZK proof status",
+      "x402": false
+    },
+    {
+      "path": "/api/v1/pools/:poolId/history",
+      "method": "GET",
+      "description": "Pool win/loss history",
+      "x402": false
+    }
+  ],
+  "mcp": {
+    "url": "https://zkurrent.xyz/.well-known/mcp.json",
+    "description": "MCP server for AI agents (Claude, Cursor, Codex)"
+  },
+  "documentation": "https://github.com/mzf11125/zkurrent/blob/main/API.md"
+}

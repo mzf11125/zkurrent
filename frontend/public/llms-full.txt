@@ -1,0 +1,67 @@
+# ZKurrent — The Autonomous Liquidity Current
+
+ZKurrent is a zero-knowledge verified autonomous liquidity provision agent for Sui DeFi. LP execution runs on Sui (DeepBook, Cetus CLMM, Cetus DLMM, Turbos). ZK attestations live on Midnight Network (Compact circuits with private state). x402-gated API for machine-to-machine micropayments.
+
+## What It Does
+
+1. SCREENS pools across 4 Sui DEXes (DeepBook, Cetus CLMM, Cetus DLMM, Turbos)
+2. DECIDES where to deploy liquidity using DeepSeek V4 Pro via LangChain
+3. EXECUTES LP positions on Sui Move contracts
+4. PROVES strategy compliance via Midnight ZK circuits (5 constraints: IL threshold, pool blocklist, pool allowlist, DEX ≤3 per DEX, position ≤20)
+5. LEARNS from past trade outcomes (win/loss per pool, adaptive weights)
+
+## Architecture
+
+Sui (LP Execution) ↔ off-chain agent (LangGraph, TypeScript) ↔ Midnight (ZK Attestation)
+Relayed by Effectstream (@effectstream/sync + @effectstream/batcher)
+
+## Security — 4 Defense Layers
+
+1. Input Sanitization — strips prompt injection vectors
+2. Guard Policy — Bastion ERC-7579 per-agent policy engine (7 checks)
+3. ZK Circuit — Midnight Compact authoritative enforcement (5 constraints)
+4. Decision Log — immutable append-only audit trail (Supabase RLS)
+
+## Tech Stack
+
+- LP Execution: Sui Move
+- ZK Attestation: Midnight Compact
+- Agent Framework: LangChain.js + LangGraph
+- LLM: DeepSeek V4 Pro (via OpenRouter)
+- Data: Supabase (PostgreSQL + Realtime)
+- Market Data: Pyth Network (on-chain Sui price feeds)
+- Cross-chain Relayer: Effectstream
+- Frontend: React 19 + Vite 8 + Tailwind CSS v4
+- Wallet: Sui dApp Kit + 1AM Midnight wallet
+- API: Hono + x402 micropayments
+- MCP: @modelcontextprotocol/sdk
+
+## API
+
+Base URL: https://api.zkurrent.xyz
+Auth: x402 protocol (SUI micropayment, no API keys)
+
+Endpoints:
+- GET  /api/v1/agent/health — free health check
+- GET  /api/v1/agent/status — agent heartbeat (0.005 SUI)
+- GET  /api/v1/agent/position-history — closed positions (0.005 SUI)
+- GET  /api/v1/pools/latest — screened pools (0.005 SUI)
+- GET  /api/v1/pools/:poolId/history — free pool stats
+- POST /api/v1/proof/verify — ZK proof verify (0.01 SUI)
+- GET  /api/v1/proof/:hash — free proof status
+
+## MCP Tools
+
+Install for Claude Desktop, Cursor, or Codex:
+```json
+{"mcpServers": {"zkurrent": {"command": "npx", "args": ["-y", "@zkurrent/mcp"]}}}
+```
+
+4 tools exposed: screen_pools, verify_proof, get_agent_status, get_pool_history
+
+## Links
+
+- Website: https://zkurrent.xyz
+- GitHub: https://github.com/mzf11125/zkurrent
+- API Docs: https://github.com/mzf11125/zkurrent/blob/main/API.md
+- License: Apache 2.0

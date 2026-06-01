@@ -1,0 +1,49 @@
+# ZKurrent — AI Agent Reference
+
+> ZKurrent is an autonomous liquidity provision agent for Sui DeFi. ZK-shielded execution, x402 micropayments, Midnight ZK proofs. 4 DEX types (DeepBook, Cetus CLMM, Cetus DLMM, Turbos).
+
+## Quick Links
+
+- Landing Page: https://zkurrent.xyz/
+- API Reference: https://github.com/mzf11125/zkurrent/blob/main/API.md
+- PRD: https://github.com/mzf11125/zkurrent/blob/main/PRD.md
+- Architecture: https://github.com/mzf11125/zkurrent/blob/main/README.md
+- Data Model: https://github.com/mzf11125/zkurrent/blob/main/DATA_MODEL.md
+- MCP Server: mcp.json at https://zkurrent.xyz/.well-known/mcp.json
+- API Catalog: https://zkurrent.xyz/.well-known/api-catalog.json
+
+## API Endpoints
+
+- GET /api/v1/agent/health — Free health check
+- GET /api/v1/pools/latest — Screened pools (x402: 0.005 SUI)
+- GET /api/v1/agent/status — Agent heartbeat (x402: 0.005 SUI)
+- POST /api/v1/proof/verify — ZK proof verification (x402: 0.01 SUI)
+
+## Optional Sections
+
+### Agent Skills
+
+ZKurrent supports Agent Skills for Claude Code, Cursor, and Codex:
+- https://zkurrent.xyz/.well-known/agent-skills.json
+
+### MCP Server
+
+Connect AI agents natively:
+```json
+{
+  "mcpServers": {
+    "zkurrent": {
+      "command": "npx",
+      "args": ["-y", "@zkurrent/mcp"]
+    }
+  }
+}
+```
+
+### Commerce (x402 Protocol)
+
+ZKurrent is a paid API service using x402 micropayments:
+- Asset: SUI (native Sui coin)
+- Price range: 0.005–0.02 SUI per call
+- No API keys, no sign-ups
+- Authorization: x402 <sui-tx-digest>

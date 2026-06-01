@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "zkurrent": {
+      "description": "ZKurrent — ZK-verified autonomous LP agent for Sui. Screen pools, verify ZK proofs, query agent status.",
+      "command": "npx",
+      "args": ["-y", "@zkurrent/mcp"],
+      "tools": [
+        {
+          "name": "screen_pools",
+          "description": "Screen all LP pools across DeepBook, Cetus CLMM, Cetus DLMM, and Turbos. Returns top 10 ranked by composite score."
+        },
+        {
+          "name": "verify_proof",
+          "description": "Verify a ZK strategy compliance or performance proof on Midnight Network."
+        },
+        {
+          "name": "get_agent_status",
+          "description": "Get ZKurrent agent heartbeat: active positions, TVL, cumulative PnL."
+        },
+        {
+          "name": "get_pool_history",
+          "description": "Get historical win/loss and average PnL for a specific pool."
+        }
+      ]
+    }
+  }
+}

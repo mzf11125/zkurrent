@@ -1,0 +1,36 @@
+# ZKurrent — Robots.txt
+# AI Agent Policy: Allow responsible indexing, block scrapers
+
+User-agent: *
+Allow: /
+
+# ── AI Crawlers ──
+# Anthropic Claude
+User-agent: Claude-Web
+Allow: /
+
+# OpenAI / ChatGPT
+User-agent: GPTBot
+Allow: /
+
+# Google AI
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+
+# ── Block known scrapers ──
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# ── Sitemap ──
+Sitemap: https://zkurrent.xyz/sitemap.xml
