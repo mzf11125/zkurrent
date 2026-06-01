@@ -146,10 +146,17 @@ SCREEN  →  DECIDE  →  EXECUTE  →  MONITOR  →  REBALANCE  →  LEARN
 │    agent_config.move      — Strategy params (Move object)     │
 │    position_tracker.move  — PnL history (Move object)        │
 │    fee_vault.move         — Fee collection (Move object)     │
+│    zk_prover.move         — Groth16 verifier (sui::groth16)  │
 │  Protocols:                                                   │
 │    DeepBook V3  — On-chain orderbook                         │
 │    Turbos       — Concentrated liquidity AMM                  │
 │    Cetus        — Concentrated liquidity AMM                  │
+│  ZK Layer (Phase 1 — Sui-native):                             │
+│    sui::groth16 — On-chain proof verification                │
+│    Noir circuit — Strategy compliance + config integrity      │
+│  ZK Layer (Phase 2 — Midnight cross-chain):                   │
+│    Midnight Compact — Private ZK attestation storage          │
+│    Midnight→Sui bridge — Verified proof relay                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -353,18 +360,44 @@ module zkurrent::zk_prover {
 }
 ```
 
-### ZK Circuit Design (Phase 1 — Simplified)
+### ZK Circuit Design (Phase 1 — Sui-native groth16)
 
-The Phase 1 ZK proof uses a simplified Groth16 circuit that proves two constraints:
+ZKurrent uses **Sui's native `sui::groth16` verifier** for Phase 1. The circuit is written in Noir and compiled to a Groth16 proof that is verified on-chain by `zk_prover.move`.
+
+The circuit proves two constraints:
 
 1. **Strategy Boundary**: For every position in `PositionTracker`, the `max_il_threshold` was not exceeded before closure
 2. **Config Integrity**: The `AgentConfig` used for verification matches the one the user configured
 
-This is implemented as a minimal Noir/RISC0 circuit that takes:
-- **Public inputs**: `config_hash`, `position_count`, `proof_hash`
-- **Private witnesses**: actual position parameters (ranges, amounts, entry/exit prices)
+**Public inputs** (visible on-chain):
+- `config_hash` — SHA-256 of the AgentConfig at time of verification
+- `position_count` — number of positions covered
+- `proof_hash` — SHA-256 of the Groth16 proof
 
-The on-chain verifier (`zk_prover.move`) checks the proof against the stored config hash, ensuring the agent operated within user-defined risk limits without revealing proprietary strategy details.
+**Private witnesses** (never leave the agent):
+- Actual position parameters (ranges, amounts, entry/exit prices)
+- Specific pool selections and timing
+- Fee accrual details
+
+### Why Sui-native ZK (Not Midnight) for Phase 1
+
+| Factor | Sui-native (`sui::groth16`) | Midnight Network |
+|--------|---------------------------|-----------------|
+| Hackathon scope | Single chain — simpler architecture | Adds cross-chain bridge + proof relay |
+| Timeline fit (29 days) | Feasible | Would consume 7-10 days on infra |
+| Judge relevance | This is **Sui** Overflow | Extra chain judges don't evaluate |
+| Maturity | Native Sui Move module, documented | Compact ZK circuits (you know this deeply) |
+| Uniqueness | Standard | Genuinely novel (no existing Midnight↔Sui ZK bridge) |
+
+### Phase 2: Midnight Network Integration
+
+Post-hackathon, ZKurrent proofs will be **dual-anchored** on Midnight Network:
+
+1. ZK attestations stored privately on Midnight (Compact ledger)
+2. Midnight→Sui bridge relays verified proof hashes
+3. Users get Midnight's selective disclosure: prove creditworthiness/performance to third parties without revealing strategy IP
+
+This leverages existing Tawf ecosystem infrastructure: KREDZ (Midnight ZK circuits), MIDAS (Midnight→Base bridge), and Tawf DID (cross-chain identity).
 
 ---
 
