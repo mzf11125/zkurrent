@@ -35,6 +35,13 @@ export function LandingPage() {
       <div className="cinematic-orb orb-1" />
       <div className="cinematic-orb orb-2" />
       <div className="cinematic-orb orb-3" />
+      <div
+        className="fixed inset-0 pointer-events-none z-[1]"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(0,4,31,0.65) 0%, rgba(0,4,31,0.4) 40%, rgba(0,4,31,0.85) 100%)",
+        }}
+      />
       <Navbar />
 
       {/* ── Hero ── */}
