@@ -1,5 +1,10 @@
 {
   "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "header", "key": "Accept", "value": "text/markdown" }],
+      "destination": "/index.md"
+    },
     { "source": "/.well-known/api-catalog", "destination": "/.well-known/api-catalog" },
     { "source": "/.well-known/mcp", "destination": "/.well-known/mcp" },
     { "source": "/.well-known/oauth-protected-resource", "destination": "/.well-known/oauth-protected-resource" },
