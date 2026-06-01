@@ -1,6 +1,6 @@
 # ZKurrent — Product Requirements Document
 
-> **ZK-Verified Autonomous LP Agent for Sui DeFi**
+> **ZK-Verified Autonomous LP Agent + x402 SDK for Sui DeFi**
 >
 > Sui Overflow 2026 — Agentic Web + DeepBook Tracks
 
@@ -8,9 +8,43 @@
 
 ## Executive Summary
 
-ZKurrent is a zero-knowledge verified liquidity provision agent for Sui. It screens pools across DeepBook, Turbos, and Cetus; opens and manages concentrated liquidity positions; generates ZK proofs of strategy compliance and verifiable performance; monitors fees and impermanent loss; rebalances or exits based on strategy parameters; and learns from past trade outcomes.
+ZKurrent is a dual-offering autonomous liquidity platform for Sui:
 
-**One-liner**: Meridian for Sui, with ZK proofs — autonomous LP agent that screens, opens, proves, and learns.
+1. **ZKurrent App** — A turnkey ZK-verified LP agent that screens pools across DeepBook, Cetus, and Turbos; opens concentrated liquidity positions; generates Midnight ZK proofs of strategy compliance; and learns from past trade outcomes.
+
+2. **ZKurrent SDK & API** — x402-gated infrastructure layer. External AI agents and trading bots pay fractions of a cent in SUI to route through ZKurrent's ZK-shielded execution rails. No API keys. No sign-ups. Machine-to-machine micropayments.
+
+**One-liner**: The autonomous liquidity current — ZK-shielded execution for every agent on Sui.
+
+### Dual-Offering Architecture
+
+| Layer | Product | Users | Monetization |
+|-------|---------|-------|-------------|
+| **Application** | ZKurrent App — Turnkey LP Agent | Retail LPs, DAOs, treasuries | Open source + fee_vault % |
+| **Infrastructure** | ZKurrent SDK & API — x402 M2M Rails | AI agents, trading bots, developers | x402 micropayments (0.005–0.02 SUI/call) |
+
+### x402 M2M Payment Flow
+
+```
+External AI Agent
+    │
+    ├── GET /api/v1/pools/latest
+    │   ← 402 Payment Required: 0.005 SUI to 0xZKURRENT
+    │
+    ├── Send 0.005 SUI → tx digest
+    │
+    ├── GET /api/v1/pools/latest
+    │   Authorization: x402 <tx-digest>
+    │   ← 200: top 20 pools with scores
+    │
+    ├── Agent decides to open on DeepBook
+    │
+    ├── POST /api/v1/execute/open
+    │   Authorization: x402 <tx-digest-2>
+    │   ← 200: position opened, tx digest
+    │
+    └── (Agent earned yield — ZKurrent earned 0.01 SUI in fees)
+```
 
 ---
 

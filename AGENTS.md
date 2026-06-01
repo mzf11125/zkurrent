@@ -3,12 +3,60 @@
 ## Project Identity
 
 - **Name**: ZKurrent
-- **Purpose**: ZK-verified autonomous LP agent — Sui LP execution + Midnight ZK attestation
+- **Purpose**: ZK-verified autonomous LP platform — dual offering: turnkey agent + x402 SDK/API
 - **Domain**: zkurrent.xyz
 - **Hackathon**: Sui Overflow 2026 (Agentic Web + DeepBook) + Midnight Build Club (ZK DApp)
 - **Stack**: Sui Move (LP contracts) + Midnight Compact (ZK circuits) + TypeScript (agent) + React 19 + Vite 8 (frontend)
 
 ---
+
+## SDK & API Design Principles
+
+ZKurrent's SDK is an x402-gated infrastructure layer. External agents pay per-use via SUI micropayments.
+
+### API Versioning
+
+```
+/v1/   — Current stable (Sui Overflow)
+/v2/   — Post-hackathon (multi-agent, strategy marketplace)
+```
+
+### SDK Package Structure (Phase 2)
+
+```typescript
+// @zkurrent/sdk
+import { ZKurrentClient } from "@zkurrent/sdk";
+
+const client = new ZKurrentClient({
+  apiUrl: "https://api.zkurrent.xyz",
+  payer: suiKeypair, // x402 payments handled automatically
+});
+
+// Screen pools (0.005 SUI)
+const pools = await client.screenPools();
+
+// Open position (0.02 SUI) — agent handles payment + execution atomically
+const position = await client.openPosition({
+  poolId: "deepbook-sui-usdc",
+  amount: 1.0,
+});
+
+// Verify a ZK proof (0.01 SUI)
+const verified = await client.verifyProof("0xproof...");
+```
+
+### Rate Limiting
+
+| Tier | Rate | Price Per Call |
+|------|------|---------------|
+| Free (x402-skip demo) | 10 req/min | $0 |
+| Paid (x402 verified) | 100 req/min | 0.005–0.02 SUI |
+
+### SDK Delivery
+
+- **npm package**: `@zkurrent/sdk` (TypeScript-first, ESM + CJS)
+- **CLI tool**: `npx zkurrent init` — bootstrap an agent project
+- **MCP server**: `@zkurrent/mcp` — AI agents discover ZKurrent tools via Model Context Protocol
 
 ## Tech Stack Decisions
 

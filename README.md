@@ -1,8 +1,12 @@
-# ZKurrent — ZK-Verified Autonomous LP Agent on Sui + Midnight
+# ZKurrent — The Autonomous Liquidity Current
 
-> **Screen pools. Open positions. Prove performance. Autonomously.**
+> **ZK-shielded execution for AI agents on Sui. One current. Every agent.**
+>
+> • **For Traders**: Deploy a turnkey autonomous LP agent that screens DeepBook, Cetus & Turbos pools, opens positions, and proves performance via Midnight ZK.
+>
+> • **For Builders**: x402-gated SDK & API. Other bots and agents pay fractions of a cent to route through ZKurrent's privacy-preserving execution rails. No API keys. No sign-ups. Machine-to-machine micropayments.
 
-ZKurrent is a zero-knowledge verified liquidity provision agent. LP execution runs on Sui (DeepBook, Turbos, Cetus). ZK attestations live on Midnight Network (Compact circuits with private state). One agent, two chains, verifiable performance.
+ZKurrent isn't one agent. It's the underlying current that routes capital, data, and privacy for every agent on the network.
 
 Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBook tracks + Midnight cross-chain bonus.
 
@@ -211,15 +215,22 @@ zkurrent/
 | Track | How ZKurrent Qualifies |
 |-------|----------------------|
 | **Agentic Web** (Core, $30K 1st) | Autonomous AI agent: screens pools, opens positions, rebalances across 3 DEXes |
-| **DeepBook** (Specialized, $70K pool) | Direct DeepBook V3 integration for orderbook liquidity |
+| **DeepBook** (Specialized, $70K pool) | Direct DeepBook V3 integration for orderbook liquidity + x402 M2M payment economy |
 | **Midnight ZK** (Cross-chain bonus) | ZK attestations on Midnight Compact: private proofs of strategy compliance + verifiable PnL |
+
+### Dual-Offering Model
+
+| Offering | Target | Monetization |
+|----------|--------|-------------|
+| **ZKurrent App** — Turnkey LP agent | Retail LPs, DAOs, protocol treasuries | Free (open source) + fee_vault % on fees generated |
+| **ZKurrent SDK & API** — x402 M2M rails | External developers, AI agents, trading bots | Pay-per-use x402 micropayments in SUI (0.005–0.02 SUI per call) |
 
 ### Dual Hackathon Eligibility
 
 | Hackathon | What | Chain |
 |-----------|------|-------|
-| **Sui Overflow** | LP agent: Move contracts, off-chain agent, React dashboard | Sui |
-| **Midnight Build Club** | ZK DApp: `strategy_attest.compact` + `performance_proof.compact` + 1AM frontend | Midnight |
+| **Sui Overflow** | LP agent (Move contracts, LangGraph agent, React dashboard) + x402 API | Sui |
+| **Midnight Build Club** | ZK DApp: Compact circuits for private strategy + performance proofs | Midnight |
 
 ---
 

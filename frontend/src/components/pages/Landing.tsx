@@ -182,6 +182,68 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* ── Two Ways to Use ── */}
+      <section className="relative z-10 py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-medium text-text text-center mb-16"
+          >
+            Two Ways to Use ZKurrent
+          </motion.h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
+              viewport={{ once: true }}
+            >
+              <Card highlight="sui">
+                <div className="w-12 h-12 rounded-2xl bg-sui/10 flex items-center justify-center mb-6">
+                  <Zap className="w-6 h-6 text-sui" />
+                </div>
+                <h3 className="text-xl font-semibold text-text mb-3">For Traders</h3>
+                <Badge variant="sui">Turnkey Agent</Badge>
+                <p className="mt-4 text-sm text-text-secondary">
+                  Deploy a fully autonomous LP agent in one click. It screens
+                  DeepBook, Cetus & Turbos pools, opens positions, manages PnL,
+                  and proves performance via Midnight ZK proofs. No code needed.
+                </p>
+                <div className="mt-6 text-xs text-text-muted space-y-2">
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-sui" /> Auto-screening across 3 DEXes</span>
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-sui" /> ZK-verified performance on Midnight</span>
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-sui" /> DeepSeek V4 Pro powered decisions</span>
+                </div>
+              </Card>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              whileInView={{ opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
+              viewport={{ once: true }}
+            >
+              <Card highlight="profit">
+                <div className="w-12 h-12 rounded-2xl bg-profit/10 flex items-center justify-center mb-6">
+                  <Waves className="w-6 h-6 text-profit" />
+                </div>
+                <h3 className="text-xl font-semibold text-text mb-3">For Builders</h3>
+                <Badge variant="profit">SDK & API</Badge>
+                <p className="mt-4 text-sm text-text-secondary">
+                  Integrate ZKurrent's ZK-shielded execution rails into your own
+                  AI agents and trading bots. x402 micropayments in SUI. No API
+                  keys. No sign-ups. Pure machine-to-machine economy.
+                </p>
+                <div className="mt-6 text-xs text-text-muted space-y-2">
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> x402 M2M payments (0.005–0.02 SUI/call)</span>
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> DeepBook routing + ZK proof verification</span>
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> SDK available for TypeScript agents</span>
+                </div>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Stats ── */}
       <section className="relative z-10 py-24 px-6 bg-card/30">
         <div className="max-w-6xl mx-auto">
