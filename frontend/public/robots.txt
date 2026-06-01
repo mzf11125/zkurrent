@@ -5,23 +5,18 @@ User-agent: *
 Allow: /
 
 # ── AI Crawlers ──
-# Anthropic Claude
 User-agent: Claude-Web
 Allow: /
 
-# OpenAI / ChatGPT
 User-agent: GPTBot
 Allow: /
 
-# Google AI
 User-agent: Google-Extended
 Allow: /
 
-# Perplexity
 User-agent: PerplexityBot
 Allow: /
 
-# Meta AI
 User-agent: meta-externalagent
 Allow: /
 
@@ -31,6 +26,9 @@ Disallow: /
 
 User-agent: CCBot
 Disallow: /
+
+# ── Content Signals (RFC draft-romm-aipref-contentsignals) ──
+Content-Signal: ai-train=no, search=yes, ai-input=no
 
 # ── Sitemap ──
 Sitemap: https://zkurrent.xyz/sitemap.xml

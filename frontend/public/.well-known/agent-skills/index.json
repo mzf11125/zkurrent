@@ -1,0 +1,12 @@
+{
+  "$schema": "https://agentskills.io/schema/v0.2.0/index.json",
+  "skills": [
+    {
+      "name": "zkurrent-agent",
+      "type": "agent-skill",
+      "description": "Integrate ZKurrent's ZK-shielded LP agent into your dApp. Screen Sui pools across 4 DEXes, open LP positions, verify ZK proofs on Midnight Network, and query agent status.",
+      "url": "https://github.com/mzf11125/zkurrent",
+      "sha256": "PLACEHOLDER"
+    }
+  ]
+}
