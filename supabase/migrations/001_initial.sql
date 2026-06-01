@@ -111,6 +111,29 @@ CREATE TABLE IF NOT EXISTS strategy_configs (
 
 CREATE INDEX idx_strategy_configs_owner ON strategy_configs (owner, updated_at DESC);
 
+-- ── Decision Log (immutable audit trail) ──
+CREATE TABLE IF NOT EXISTS decision_log (
+  id BIGSERIAL PRIMARY KEY,
+  cycle_id TEXT NOT NULL,
+  prompt_hash TEXT,
+  llm_raw_output TEXT,
+  parsed_action TEXT NOT NULL,
+  guard_passed BOOLEAN NOT NULL DEFAULT TRUE,
+  guard_violation TEXT,
+  executed_on_chain BOOLEAN NOT NULL DEFAULT FALSE,
+  sui_tx_digest TEXT,
+  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_decision_log_timestamp ON decision_log (timestamp DESC);
+CREATE INDEX idx_decision_log_guard ON decision_log (guard_passed, timestamp DESC);
+
+-- ⚠️ RLS: decision_log is append-only. No UPDATE/DELETE for regular users.
+ALTER TABLE decision_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow insert for all" ON decision_log FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow select for all" ON decision_log FOR SELECT USING (true);
+
 -- ── Trigger: auto-update updated_at ──
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$

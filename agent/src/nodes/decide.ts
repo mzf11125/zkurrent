@@ -108,10 +108,24 @@ import { createSuiClient } from "../integrations/sui.js";
 import { getMarketPrices, getDerivedPairs } from "../integrations/pyth.js";
 import { getOnChainContext } from "../integrations/sui-indexer.js";
 import { getPoolPerformance } from "../integrations/supabase.js";
+import { sanitize, sanitizePoolName, sanitizeTokenPair, sanitizeEventDetail, hashPrompt } from "../security/sanitize.js";
+import { guard } from "../security/guard.js";
+import { recordDecision } from "../security/audit.js";
+import { advanceCycle, checkSessionGuard } from "../security/session-guard.js";
+import type { AgentAction } from "../types.js";
+
+let consecutiveFails = 0;
 
 export async function decideNodeWithLLM(
   state: typeof AgentState.State
 ): Promise<Partial<typeof AgentState.State>> {
+  // ── Session Guard ──
+  const { cycleId } = advanceCycle();
+  const sessionCheck = checkSessionGuard({ lastActionFailed: !!state.lastError, consecutiveFails });
+  if (!sessionCheck.allowed) {
+    return { cycleStatus: "idle", lastError: sessionCheck.reason };
+  }
+
   const { client: suiClient } = createSuiClient();
 
   // ── Phase 2: Market Data (Pyth on-chain prices) ──
@@ -130,13 +144,11 @@ export async function decideNodeWithLLM(
   // ── Phase 1: Pool History ──
   const topPools = state.screenedPools.slice(0, 5);
   const historySummaries: string[] = [];
+  const supabaseClient = (await import("../integrations/supabase.js")).createSupabaseClient();
   for (const pool of topPools) {
-    const perf = await getPoolPerformance(
-      (await import("../integrations/supabase.js")).createSupabaseClient(),
-      pool.poolId
-    );
+    const perf = await getPoolPerformance(supabaseClient, pool.poolId);
     historySummaries.push(
-      `${pool.dex} ${pool.tokenPair}: ${perf.wins}W/${perf.losses}L avgPnL=${perf.avgPnl.toFixed(2)}`
+      sanitize(`${pool.dex} ${pool.tokenPair}: ${perf.wins}W/${perf.losses}L avgPnL=${perf.avgPnl.toFixed(2)}`, 200)
     );
   }
 
@@ -148,6 +160,7 @@ export async function decideNodeWithLLM(
     },
   });
 
+  // ── Build sanitized prompt ──
   const prompt = `You are ZKurrent, an autonomous LP agent on Sui.
 
 Make ONE decision: OPEN a new position, CLOSE an existing one, REBALANCE, or HOLD.
@@ -158,20 +171,20 @@ ETH/USD: $${pairs["ETH/USD"].toFixed(0)} (confidence: ±${pairs.confidence.ETH.t
 ETH/SUI: ${pairs["ETH/SUI"].toFixed(4)}
 
 ## Pools (top ${topPools.length}, scored on Sui)
-${topPools.map((p, i) => `${i + 1}. ${p.dex} ${p.tokenPair}: score=${p.score} APY=${p.apy.toFixed(1)}% TVL=$${(p.tvl / 1_000_000).toFixed(1)}M vol24h=$${(p.volume24h / 1000).toFixed(0)}K`).join("\n")}
+${topPools.map((p, i) => `${i + 1}. ${sanitizePoolName(p.dex)} ${sanitizeTokenPair(p.tokenPair)}: score=${p.score} APY=${p.apy.toFixed(1)}% TVL=$${(p.tvl / 1_000_000).toFixed(1)}M vol24h=$${(p.volume24h / 1000).toFixed(0)}K`).join("\n")}
 
 ## Positions (${state.activePositions.length} open)
 ${state.activePositions.length > 0
-    ? state.activePositions.map((p) => `- ${p.dex} ${p.tokenPair}: range=[${p.rangeLow},${p.rangeHigh}] fees=+$${p.feesEarned.toFixed(2)} IL=-$${Math.abs(p.impermanentLoss).toFixed(2)} net=${p.netPnl >= 0 ? "+" : "-"}$${Math.abs(p.netPnl).toFixed(2)}`)
+    ? state.activePositions.map((p) => `- ${sanitizePoolName(p.dex)} ${sanitizeTokenPair(p.tokenPair)}: range=[${p.rangeLow},${p.rangeHigh}] fees=+$${p.feesEarned.toFixed(2)} IL=-$${Math.abs(p.impermanentLoss).toFixed(2)} net=${p.netPnl >= 0 ? "+" : "-"}$${Math.abs(p.netPnl).toFixed(2)}`)
     : "(none)"}
-DEX breakdown: ${Object.entries(dexCounts).map(([d, c]) => `${d}=${c}`).join(" | ") ?? "none"}
+DEX breakdown: ${Object.entries(dexCounts).map(([d, c]) => `${sanitizePoolName(d)}=${c}`).join(" | ") ?? "none"}
 
 ## On-Chain Activity (last 6h on Sui)
 ${onChain.whales.length > 0
-    ? onChain.whales.map((w) => `WHALE: ${w.amount.toLocaleString()} SUI → ${w.dex} ${w.poolId} (${w.type})`).join("\n")
+    ? onChain.whales.map((w) => `WHALE: ${w.amount.toLocaleString()} SUI → ${sanitizePoolName(w.dex)} ${sanitize(sanitizePoolName(w.poolId), 80)} (${w.type})`).join("\n")
     : "(no whale activity)"}
 ${onChain.events.filter((e) => e.type === "new_pool").length > 0
-    ? onChain.events.filter((e) => e.type === "new_pool").map((e) => `NEW POOL: ${e.dex} ${e.detail}`).join("\n")
+    ? onChain.events.filter((e) => e.type === "new_pool").map((e) => `NEW POOL: ${sanitizePoolName(e.dex)} ${sanitizeEventDetail(e.detail)}`).join("\n")
     : ""}
 
 ## History (pool performance)
@@ -198,29 +211,64 @@ Respond with a single action word and optional detail:
 
 Action:`;
 
+  const promptHash = await hashPrompt(prompt);
+
   const response = await model.invoke(prompt);
-  const raw = (response.content as string).toLowerCase().trim();
+  const llmRawOutput = (response.content as string).trim();
+  const raw = llmRawOutput.toLowerCase();
   const actionText = raw.split("\n")[0]?.split(" ")[0] ?? "hold";
   const actionMap: Record<string, AgentAction> = {
     open: "open", close: "close", rebalance: "rebalance", hold: "hold", skip: "skip",
   };
+  const parsedAction = actionMap[actionText] ?? "hold";
 
-  // Extract pool info if provided
+  // ── Guard Check BEFORE execution ──
   const poolMatch = raw.match(/pool=(\d+)/);
   const dexMatch = raw.match(/dex=(\w+)/);
   const selectedPoolIdx = poolMatch ? parseInt(poolMatch[1]) - 1 : 0;
   const selectedDex = dexMatch?.[1] ?? topPools[0]?.dex;
-
-  // Find the pool matching both idx and dex if specified
   let selectedPool = topPools[selectedPoolIdx] ?? null;
   if (selectedDex && selectedPool?.dex !== selectedDex) {
     selectedPool = topPools.find((p) => p.dex === selectedDex) ?? selectedPool;
   }
 
+  const guardResult = guard({
+    action: parsedAction,
+    pool: selectedPool,
+    targetPosition: parsedAction === "close" ? (state.activePositions[0] ?? null) : null,
+    activePositions: state.activePositions,
+    config: state.config!,
+  });
+
+  // ── Audit Log ──
+  await recordDecision({
+    cycleId: `cycle-${cycleId}`,
+    promptHash,
+    llmRawOutput,
+    parsedAction,
+    guardPassed: guardResult.passed,
+    guardViolation: guardResult.violation ?? null,
+    executedOnChain: false,
+    suiTxDigest: null,
+    timestamp: new Date().toISOString(),
+  });
+
+  if (!guardResult.passed) {
+    consecutiveFails++;
+    return {
+      cycleStatus: "idle",
+      selectedAction: "hold",
+      lastError: `Guard rejected: ${guardResult.violation}`,
+    };
+  }
+
+  consecutiveFails = 0;
+
   return {
     cycleStatus: "executing",
-    selectedAction: actionMap[actionText] ?? "hold",
-    selectedPool: selectedPool ?? state.screenedPools[0] ?? null,
+    selectedAction: parsedAction,
+    selectedPool: guardResult.pool ?? selectedPool ?? state.screenedPools[0] ?? null,
+    targetPosition: parsedAction === "close" ? (state.activePositions[0] ?? null) : null,
     lastError: null,
   };
 }

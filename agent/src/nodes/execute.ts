@@ -1,8 +1,9 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { AgentState, PositionRecord } from "../types.js";
-import { openLPPosition, closeLPPosition } from "../integrations/sui.js";
 import { createSuiClient } from "../integrations/sui.js";
 import { upsertPosition, publishEvent } from "../integrations/supabase.js";
+import { preExecutionGuard } from "../security/guard.js";
+import { recordDecision } from "../security/audit.js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AgentState, PositionRecord } from "../types.js";
 
 export async function executeNode(
   state: typeof AgentState.State,
@@ -10,6 +11,29 @@ export async function executeNode(
 ): Promise<Partial<typeof AgentState.State>> {
   const supabase = config?.configurable?.supabase;
   const { client, keypair } = createSuiClient();
+
+  // ── Pre-execution guard check ──
+  if (state.config && state.selectedPool) {
+    const preGuard = preExecutionGuard({
+      action: state.selectedAction ?? "hold",
+      poolId: state.selectedPool.poolId,
+      config: state.config,
+    });
+    if (!preGuard.passed) {
+      await recordDecision({
+        cycleId: `cycle-${Date.now()}`,
+        promptHash: null,
+        llmRawOutput: null,
+        parsedAction: state.selectedAction ?? "hold",
+        guardPassed: false,
+        guardViolation: preGuard.violation ?? null,
+        executedOnChain: false,
+        suiTxDigest: null,
+        timestamp: new Date().toISOString(),
+      });
+      return { cycleStatus: "idle", lastError: `Pre-execution guard: ${preGuard.violation}` };
+    }
+  }
 
   try {
     switch (state.selectedAction) {
