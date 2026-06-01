@@ -65,8 +65,6 @@ Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBoo
                               │   local dev environment    │
                               └────────────────────────────┘
 ```
-```
-
 ---
 
 ## Agent Loop
@@ -104,7 +102,7 @@ Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBoo
 ### Installation
 
 ```bash
-git clone https://github.com/tawf-labs/zkurrent.git
+git clone https://github.com/mzf11125/zkurrent.git
 cd zkurrent
 
 # Install all dependencies
@@ -142,46 +140,103 @@ sui client publish --gas-budget 100000000
 zkurrent/
 ├── README.md
 ├── PRD.md
+├── DATA_MODEL.md
 ├── AGENTS.md
 ├── DESIGN_GUIDELINES.md
+├── LICENSE
 ├── contracts/
 │   └── zkurrent/
 │       ├── Move.toml
-│       └── sources/
-│           ├── agent_config.move
-│           ├── position_tracker.move
-│           └── fee_vault.move
+│       ├── sources/
+│       │   ├── agent_config.move
+│       │   ├── position_tracker.move
+│       │   ├── fee_vault.move
+│       │   └── zk_prover.move
+│       ├── circuits/                # Midnight Compact contracts
+│       └── tests/
 ├── agent/
 │   ├── package.json
-│   ├── src/
-│   │   ├── index.ts
-│   │   ├── pool-screener.ts
-│   │   ├── position-manager.ts
-│   │   ├── learning-engine.ts
-│   │   ├── deepbook.ts
-│   │   ├── cetus.ts
-│   │   ├── turbos.ts
-│   │   └── config.ts
-│   └── .env.example
+│   ├── tsconfig.json
+│   ├── .env.example
+│   └── src/
+│       ├── index.ts                 # Agent entrypoint + LangGraph runner
+│       ├── graph.ts                 # LangGraph workflow definition
+│       ├── types.ts                 # Zod-validated type schemas
+│       ├── nodes/
+│       │   ├── screen.ts            # Pool screening via Sui Indexer
+│       │   ├── decide.ts            # LLM-powered decision (DeepSeek V4 Pro)
+│       │   ├── execute.ts           # On-chain LP operations
+│       │   ├── monitor.ts           # Position health monitoring
+│       │   └── learn.ts             # Outcome recording + weight updates
+│       ├── tools/
+│       │   ├── screenPools.ts       # Unified pool screening tool
+│       │   ├── openPosition.ts      # Open LP position tool
+│       │   ├── closePosition.ts     # Close LP position tool
+│       │   ├── getPoolHistory.ts    # Historical pool performance
+│       │   └── generateZKProof.ts   # Midnight ZK proof generation
+│       ├── integrations/
+│       │   ├── sui.ts               # Sui SDK wrappers
+│       │   ├── supabase.ts          # Supabase queries + realtime
+│       │   ├── midnight.ts          # Midnight Compact + ProofStation
+│       │   ├── cetus.ts             # Cetus CLMM SDK
+│       │   ├── cetus-dlmm.ts        # Cetus DLMM SDK
+│       │   ├── deepbook.ts          # DeepBook V3 SDK
+│       │   ├── turbos.ts            # Turbos CLMM SDK
+│       │   ├── pyth.ts              # Pyth on-chain price feeds
+│       │   ├── sui-indexer.ts       # Whale + ecosystem event detection
+│       │   └── effectstream.ts      # Cross-chain proof relay
+│       ├── security/
+│       │   ├── sanitize.ts          # Prompt injection defense
+│       │   ├── guard.ts             # Bastion policy engine
+│       │   ├── audit.ts             # Immutable decision log
+│       │   └── session-guard.ts     # Circuit breaker + rate limits
+│       └── api/
+│           ├── server.ts            # Hono HTTP server
+│           ├── middleware/
+│           │   └── x402.ts          # SUI micropayment verification
+│           └── routes/
+│               ├── proof.ts         # ZK proof verification endpoint
+│               ├── pools.ts         # Pool data endpoint
+│               └── agent.ts         # Agent status endpoint
 ├── frontend/
 │   ├── package.json
 │   ├── vite.config.ts
+│   ├── vercel.json
 │   ├── index.html
 │   └── src/
+│       ├── App.tsx                  # Sui wallet providers + routing
 │       ├── main.tsx
-│       ├── App.tsx
-│       ├── index.css
+│       ├── index.css                # Liquid Ledger design system
 │       ├── components/
+│       │   ├── WordsPullUp.tsx       # KREDZ text animation
+│       │   ├── BlurIn.tsx            # KREDZ blur-in animation
 │       │   ├── layout/
+│       │   │   ├── Navbar.tsx        # KREDZ-style glass navbar
+│       │   │   └── Layout.tsx        # Cinematic background + routing
 │       │   ├── pages/
+│       │   │   ├── Landing.tsx       # Marketing landing page
+│       │   │   ├── Dashboard.tsx     # Agent overview + metrics
+│       │   │   ├── Pools.tsx         # Pool screener table
+│       │   │   ├── Positions.tsx     # Active + closed LP positions
+│       │   │   └── Strategy.tsx      # Agent configuration
 │       │   ├── sections/
+│       │   │   ├── AgentStatusBar.tsx
+│       │   │   ├── PnLChart.tsx
+│       │   │   ├── PositionCard.tsx
+│       │   │   ├── PoolTable.tsx
+│       │   │   └── ActivityFeed.tsx
 │       │   └── ui/
+│       │       ├── Button.tsx
+│       │       ├── Card.tsx
+│       │       ├── Badge.tsx
+│       │       └── MetricCard.tsx
 │       ├── hooks/
 │       ├── stores/
 │       └── utils/
-├── docs/
-│   └── architecture.md
-├── package.json
+├── supabase/
+│   └── migrations/
+│       └── 001_initial.sql          # Full schema (6 tables + RLS)
+├── package.json                     # Workspace root (pnpm)
 ├── pnpm-workspace.yaml
 └── turbo.json
 ```
@@ -227,7 +282,7 @@ ZKurrent inherits Bastion's ERC-7579 per-agent policy engine with 4 defense laye
 
 | Track | How ZKurrent Qualifies |
 |-------|----------------------|
-| **Agentic Web** (Core, $30K 1st) | Autonomous AI agent: screens pools, opens positions, rebalances across 3 DEXes |
+| **Agentic Web** (Core, $30K 1st) | Autonomous AI agent: screens pools, opens positions, rebalances across 4 DEX types |
 | **DeepBook** (Specialized, $70K pool) | Direct DeepBook V3 integration for orderbook liquidity + x402 M2M payment economy |
 | **Midnight ZK** (Cross-chain bonus) | ZK attestations on Midnight Compact: private proofs of strategy compliance + verifiable PnL |
 
@@ -283,4 +338,4 @@ ZKurrent inherits Bastion's ERC-7579 per-agent policy engine with 4 defense laye
 
 ## License
 
-Apache 2.0
+Licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full text.
