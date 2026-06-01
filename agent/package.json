@@ -1,0 +1,37 @@
+{
+  "name": "zkurrent-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.0",
+    "@langchain/langgraph": "^0.2.0",
+    "@langchain/openai": "^0.3.0",
+    "@mysten/sui": "^1.26.0",
+    "@mysten/dapp-kit": "^0.15.0",
+    "@midnight-ntwrk/midnight-js": "^0.3.0",
+    "@midnight-ntwrk/compact-runtime": "^0.3.0",
+    "@cetusprotocol/sui-clmm-sdk": "^1.4.5",
+    "@effectstream/node-sdk": "latest",
+    "@effectstream/sync": "latest",
+    "@effectstream/midnight-contracts": "latest",
+    "@effectstream/batcher": "latest",
+    "@supabase/supabase-js": "^2.49.0",
+    "zod": "^3.24.0",
+    "dotenv": "^16.4.0",
+    "langsmith": "^0.3.0",
+    "node-cron": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

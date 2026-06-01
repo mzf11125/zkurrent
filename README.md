@@ -14,45 +14,53 @@ Built for [Sui Overflow 2026](https://sui.io/overflow) — Agentic Web + DeepBoo
 ┌──────────────────────────────────────────────────────────┐
 │                     React Dashboard                       │
 │  /dashboard  │  /pools  │  /positions  │  /strategy      │
-│  (Sui dApp Kit + 1AM wallet + SSE stream)                │
+│  (Sui dApp Kit + 1AM wallet + Supabase Realtime)        │
 └──────────────────────┬───────────────────────────────────┘
-                       │ HTTP + SSE
+                       │
 ┌──────────────────────┴───────────────────────────────────┐
-│                   Off-Chain Agent (TypeScript)            │
+│              Off-Chain Agent (LangGraph)                  │
 │  ┌──────────┐  ┌──────────┐  ┌──────────────┐           │
-│  │ Pool      │  │ Position  │  │ Learning     │           │
-│  │ Screener  │  │ Manager   │  │ Engine       │           │
-│  └────┬─────┘  └────┬─────┘  └──────┬───────┘           │
-│       │              │               │                    │
-│       │     Sui SDK + Midnight SDK                       │
-└───────┼──────────────┼───────────────┼────────────────────┘
-        │              │               │
-┌───────┴──────────────┴───────────────┴────────────────────┐
-│                    Sui Blockchain (LP Execution)           │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
-│  │ AgentConfig  │  │PositionTracker│  │  FeeVault    │   │
-│  │  (Move obj)  │  │  (Move obj)  │  │  (Move obj)  │   │
-│  └──────────────┘  └──────────────┘  └──────────────┘   │
-│  ┌──────────────┐                                        │
-│  │  zk_prover   │ ← verifies Midnight proof hashes      │
-│  │  (Move obj)  │                                        │
-│  └──────────────┘                                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
-│  │  DeepBook    │  │   Turbos     │  │    Cetus     │   │
-│  │ (orderbook)  │  │   (CLMM)     │  │   (CLMM)     │   │
-│  └──────────────┘  └──────────────┘  └──────────────┘   │
-└───────────────────────┬───────────────────────────────────┘
-                        │ Proof hash relay
-┌───────────────────────┴───────────────────────────────────┐
-│            Midnight Network (ZK Attestation Layer)         │
-│  ┌──────────────────────┐  ┌──────────────────────┐      │
-│  │ strategy_attest      │  │ performance_proof    │      │
-│  │   (Compact circuit)  │  │   (Compact circuit)  │      │
-│  │ Private: position    │  │ Private: trade       │      │
-│  │ params, ranges, fees │  │ outcomes, IL events  │      │
-│  └──────────────────────┘  └──────────────────────┘      │
-│  1AM Wallet · ProofStation · Midnight Indexer            │
-└──────────────────────────────────────────────────────────┘
+│  │ SCREEN   │─▶│ DECIDE   │─▶│  EXECUTE     │           │
+│  │ (tools)  │  │ (DeepSeek│  │  (Cetus SDK   │           │
+│  │          │  │  V4 Pro) │  │   + Sui SDK)  │           │
+│  └──────────┘  └──────────┘  └──────┬───────┘           │
+│       ▲                             │                    │
+│       │         ┌─────────┐         │                    │
+│       └─────────│  LEARN  │◀────────┘                    │
+│                 │(Supabase│                               │
+│                 │ weights)│                               │
+│                 └────┬────┘                               │
+│                      │                                    │
+│              ┌───────▼────────┐                          │
+│              │   MONITOR      │                          │
+│              │ (Supabase RT)  │                          │
+│              └────────────────┘                          │
+└──────┬──────────────────────┬───────────────────────────┘
+       │ Sui SDK              │ Midnight SDK
+       ▼                      ▼
+┌──────────────┐    ┌─────────────────────────────────────┐
+│  Sui (LP)    │    │   Midnight Network (ZK Attestation) │
+│              │    │                                     │
+│ agent_config │    │  strategy_attest.compact             │
+│ pos_tracker  │    │  performance_proof.compact          │
+│ fee_vault    │    │                                     │
+│ zk_prover◄───┼────│── proof hash relay                  │
+│              │    │  1AM Wallet · ProofStation           │
+│ DeepBook     │    └──────────────────┬──────────────────┘
+│ Cetus CLMM   │                       │
+│ Turbos       │              ┌────────▼──────────────────┐
+└──────────────┘              │   Effectstream Relayer     │
+                              │                            │
+                              │ @effectstream/sync         │
+                              │   reads Midnight ledger    │
+                              │                            │
+                              │ @effectstream/batcher      │
+                              │   relays proof hash → Sui  │
+                              │                            │
+                              │ @effectstream/orchestrator  │
+                              │   local dev environment    │
+                              └────────────────────────────┘
+```
 ```
 
 ---
@@ -182,10 +190,12 @@ zkurrent/
 |-------|-----------|---------|
 | LP Execution | Sui Move | latest |
 | ZK Attestation | Midnight Compact | — |
-| Agent | TypeScript + Node.js | 22+ |
-| Frontend | React | 19 |
-| Build Tool | Vite | 8 |
-| Styling | Tailwind CSS | v4 |
+| Agent Framework | LangChain.js + LangGraph | ^0.3 / ^0.2 |
+| LLM (optional) | DeepSeek V4 Pro (via OpenRouter) | `deepseek/deepseek-chat` |
+| Data Layer | Supabase (PostgreSQL + Realtime) | ^2.49 |
+| Pool Screening | @cetusprotocol/sui-clmm-sdk | ^1.4 |
+| DEX Integration | DeepBook V3 + Cetus CLMM + Turbos | — |
+| Frontend | React 19 + Vite 8 + Tailwind CSS v4 | latest |
 | Animation | Framer Motion | 12+ |
 | Icons | Lucide React | latest |
 | State | Zustand | 5+ |
