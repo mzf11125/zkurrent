@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Waves, TrendingUp, Shield, Zap, ArrowRight } from "lucide-react";
-import { Button } from "../ui/Button.js";
 import { Card } from "../ui/Card.js";
 import { Badge } from "../ui/Badge.js";
 import { Navbar } from "../layout/Navbar.js";
@@ -44,10 +43,10 @@ export function LandingPage() {
       </svg>
       <Navbar />
 
-      {/* ── Hero ── */}
-      <section className="relative z-10 pt-36 pb-28 px-6 overflow-hidden">
+      {/* ── Hero — full viewport, centered ── */}
+      <section className="relative z-10 flex min-h-screen items-center justify-center px-4 md:px-6 overflow-hidden">
         <motion.div
-          className="max-w-6xl mx-auto text-center"
+          className="w-full max-w-6xl mx-auto text-center -mt-16"
           style={{ y: heroY, opacity: heroOpacity }}
         >
           <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-medium text-text leading-[0.95] tracking-[-0.04em]">
@@ -57,22 +56,22 @@ export function LandingPage() {
             />
           </h1>
 
-          <BlurIn className="mt-8">
-            <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+          <BlurIn className="mt-6 md:mt-8">
+            <p className="text-base md:text-xl text-text-secondary max-w-xl md:max-w-2xl mx-auto leading-relaxed px-2">
               ZKurrent screens pools, opens positions, proves strategy compliance
-              via Midnight ZK proofs, and learns from every trade — autonomously on Sui.
+              via Midnight ZK proofs, and learns from every trade — autonomously.
             </p>
           </BlurIn>
 
-          <BlurIn duration={1.4} className="mt-12">
-            <div className="flex items-center justify-center gap-4 flex-wrap">
-              <Link to="/dashboard">
-                <button className="glow-btn rounded-full bg-sui hover:bg-sui-hover text-white font-medium text-sm px-8 py-3.5 transition-all duration-300 inline-flex items-center gap-2">
+          <BlurIn duration={1.4} className="mt-10 md:mt-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Link to="/dashboard" className="w-full sm:w-auto">
+                <button className="glow-btn w-full sm:w-auto rounded-full bg-sui hover:bg-sui-hover text-white font-medium text-sm px-8 py-3.5 transition-all duration-300 inline-flex items-center justify-center gap-2">
                   Launch App <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
-              <a href="https://github.com/mzf11125/zkurrent" target="_blank" rel="noopener noreferrer">
-                <button className="rounded-full bg-[#1A1A1A] border border-text/5 text-text-muted hover:text-text hover:bg-card-hover hover:border-text/10 font-medium text-sm px-8 py-3.5 transition-all duration-200">
+              <a href="https://github.com/mzf11125/zkurrent" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto rounded-full bg-[#1A1A1A] border border-text/5 text-text-muted hover:text-text hover:bg-card-hover hover:border-text/10 font-medium text-sm px-8 py-3.5 transition-all duration-200">
                   View on GitHub
                 </button>
               </a>
@@ -83,7 +82,7 @@ export function LandingPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { delay: 1.2, duration: 0.8 } }}
-            className="mt-20 flex items-center justify-center gap-8 text-text-muted text-xs uppercase tracking-[0.2em]"
+            className="mt-16 md:mt-20 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-text-muted text-[10px] md:text-xs uppercase tracking-[0.2em]"
           >
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-deepbook" /> DeepBook V3</span>
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-cetus" /> Cetus CLMM</span>
@@ -94,17 +93,17 @@ export function LandingPage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="relative z-10 py-28 px-6 border-t border-text/5">
+      <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <BlurIn className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-medium text-text">Why ZKurrent</h2>
-            <p className="mt-4 text-text-secondary max-w-xl mx-auto">
+          <BlurIn className="text-center mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-medium text-text">Why ZKurrent</h2>
+            <p className="mt-3 md:mt-4 text-sm md:text-base text-text-secondary max-w-xl mx-auto">
               Meridian for Sui — with ZK proofs. Autonomous LP management across
               three DEXes, verifiable on Midnight.
             </p>
           </BlurIn>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {FEATURES.map((f, i) => (
               <motion.div
                 key={f.title}
@@ -133,13 +132,13 @@ export function LandingPage() {
       </section>
 
       {/* ── How It Works ── */}
-      <section className="relative z-10 py-28 px-6 border-t border-text/5">
+      <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <BlurIn className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-medium text-text">How It Works</h2>
+          <BlurIn className="text-center mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-medium text-text">How It Works</h2>
           </BlurIn>
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {STEPS.map((s, i) => (
               <motion.div
                 key={s.step}
@@ -161,12 +160,12 @@ export function LandingPage() {
       </section>
 
       {/* ── Two Ways to Use ── */}
-      <section className="relative z-10 py-28 px-6 border-t border-text/5">
+      <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <BlurIn className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-medium text-text">Two Ways to Use ZKurrent</h2>
+          <BlurIn className="text-center mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-medium text-text">Two Ways to Use ZKurrent</h2>
           </BlurIn>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <motion.div
               initial={{ opacity: 0, x: -24 }}
               whileInView={{ opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
@@ -218,9 +217,9 @@ export function LandingPage() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="relative z-10 py-28 px-6 bg-card/30 border-t border-text/5">
+      <section className="relative z-10 py-20 md:py-28 px-4 md:px-6 bg-card/30 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-6 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { label: "DEXes", value: "3", trend: "up" as const },
               { label: "ZK Circuits", value: "2", trend: "up" as const },
@@ -237,36 +236,36 @@ export function LandingPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="relative z-10 py-36 px-6 text-center border-t border-text/5">
+      <section className="relative z-10 py-24 md:py-36 px-4 md:px-6 text-center border-t border-text/5">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl md:text-5xl font-medium text-text">
+          <h2 className="text-2xl md:text-5xl font-medium text-text">
             Ready to deploy autonomous liquidity?
           </h2>
-          <p className="mt-4 text-text-secondary max-w-lg mx-auto">
+          <p className="mt-3 md:mt-4 text-sm md:text-base text-text-secondary max-w-lg mx-auto">
             One agent. Three DEXes. ZK-verified performance on Midnight.
           </p>
-          <div className="mt-10">
+          <div className="mt-8 md:mt-10">
             <Link to="/dashboard">
-              <Button size="lg">
+              <button className="glow-btn rounded-full bg-sui hover:bg-sui-hover text-white font-medium text-sm px-8 py-3.5 transition-all duration-300 inline-flex items-center gap-2">
                 Open Dashboard <ArrowRight className="w-4 h-4" />
-              </Button>
+              </button>
             </Link>
           </div>
         </motion.div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 border-t border-text/5 py-16 px-6">
+      <footer className="relative z-10 border-t border-text/5 py-12 md:py-16 px-4 md:px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded bg-gradient-to-br from-sui to-profit" />
-            <span className="text-text-muted text-sm">ZKurrent — Sui Overflow 2026</span>
+            <span className="text-text-muted text-xs md:text-sm">ZKurrent — Sui Overflow 2026</span>
           </div>
-          <div className="flex items-center gap-6 text-xs text-text-muted">
+          <div className="flex items-center gap-6 text-[10px] md:text-xs text-text-muted">
             <a href="https://github.com/mzf11125/zkurrent" className="hover:text-text transition-colors">GitHub</a>
             <a href="https://zkurrent.xyz" className="hover:text-text transition-colors">zkurrent.xyz</a>
             <span className="text-text-dim">Apache 2.0</span>

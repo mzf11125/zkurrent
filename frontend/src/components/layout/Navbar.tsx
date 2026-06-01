@@ -17,7 +17,7 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-[#000510]/95 backdrop-blur-md border-b border-text/5">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 md:px-12 py-3 md:py-4 flex items-center justify-between">
         {/* Logo — KREDZ pattern: colored square + text */}
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-6 h-6 rounded bg-gradient-to-br from-sui to-profit flex items-center justify-center">
