@@ -14,7 +14,7 @@ export function WordsPullUp({ text, className = "", gradientWords }: WordsPullUp
   const words = text.split(" ");
 
   return (
-    <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.3em] ${className}`}>
+    <span ref={ref} className={`inline-flex flex-wrap justify-center gap-x-[0.3em] ${className}`}>
       {words.map((word, i) => {
         const isGradient = gradientWords?.includes(word.replace(/[^a-zA-Z-]/g, ""));
         return (
