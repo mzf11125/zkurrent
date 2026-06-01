@@ -45,7 +45,7 @@ export function LandingPage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative z-10 pt-32 pb-24 px-6">
+      <section className="relative z-10 pt-36 pb-28 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <motion.div
             initial="hidden"
@@ -109,7 +109,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="relative z-10 py-24 px-6">
+      <section className="relative z-10 py-28 px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -153,7 +153,7 @@ export function LandingPage() {
       </section>
 
       {/* ── How It Works ── */}
-      <section className="relative z-10 py-24 px-6">
+      <section className="relative z-10 py-28 px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
@@ -186,7 +186,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Two Ways to Use ── */}
-      <section className="relative z-10 py-24 px-6">
+      <section className="relative z-10 py-28 px-6 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
@@ -248,7 +248,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="relative z-10 py-24 px-6 bg-card/30">
+      <section className="relative z-10 py-28 px-6 bg-card/30 border-t border-text/5">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-6 text-center">
             {[
@@ -267,7 +267,7 @@ export function LandingPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="relative z-10 py-32 px-6 text-center">
+      <section className="relative z-10 py-36 px-6 text-center border-t border-text/5">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as never } }}
@@ -290,7 +290,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 border-t border-text/5 py-12 px-6">
+      <footer className="relative z-10 border-t border-text/5 py-16 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded bg-gradient-to-br from-sui to-profit" />

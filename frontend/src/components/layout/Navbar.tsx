@@ -16,7 +16,7 @@ export function Navbar() {
   const isLanding = pathname === "/";
 
   return (
-    <nav className="glass fixed top-0 w-full z-50">
+    <nav className="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-text/5">
       <div className="max-w-6xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
         {/* Logo — KREDZ pattern: colored square + text */}
         <Link to="/" className="flex items-center gap-2.5">
