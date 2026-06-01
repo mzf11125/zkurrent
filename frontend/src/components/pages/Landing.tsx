@@ -208,7 +208,7 @@ export function LandingPage() {
                 <div className="mt-6 text-xs text-text-muted space-y-2">
                   <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> x402 M2M payments (0.005–0.02 SUI/call)</span>
                   <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> DeepBook routing + ZK proof verification</span>
-                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> SDK available for TypeScript agents</span>
+                  <span className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-profit" /> REST API + MCP server (AI agents call directly)</span>
                 </div>
               </Card>
             </motion.div>
